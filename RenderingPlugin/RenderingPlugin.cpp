@@ -154,9 +154,9 @@ extern "C" void EXPORT_API UnityRenderEvent (int eventID)
 	// in D3D9/11 and OpenGL, for example, since they expect color bytes
 	// in different ordering.
 	MyVertex verts[3] = {
-		{ -0.5f, -0.25f,  0, 0xFFff0000 },
-		{  0.5f, -0.25f,  0, 0xFF00ff00 },
-		{  0,     0.5f ,  0, 0xFF0000ff },
+		{ -0.5f, 0.0f,  0, 0xFF00ff00 },
+		{  0.5f, 0.0f,  0, 0xFF00ff00 },
+		{  0,     1.0f ,  0, 0xFF0000ff },
 	};
 
 
