@@ -20,7 +20,8 @@
 	#if UNITY_WIN || UNITY_LINUX
 		#include <GL/gl.h>
 	#else
-		#include <OpenGL/OpenGL.h>
+        #include <GLUT/GLUT.h>
+        #include <OpenGL/OpenGL.h>
 	#endif
 #endif
 
