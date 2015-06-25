@@ -19,3 +19,24 @@
 
 # Unity3D Generated File On Crash Reports
 sysinfo.txt
+
+# Makefiles
+MakeFile
+
+# XCode files
+RenderingPlugin.xcodeproj
+Xcode3
+
+# CMake temporal files
+CMakeFiles   
+CMakeScripts
+cmake_install.cmake
+CMakeCache.txt
+CMakeFiles
+
+# MacOS libraries
+*.DS_Store
+*.dylib
+*.bundle
+*.app
+*.build
