@@ -150,13 +150,12 @@ extern "C" void EXPORT_API UnityRenderEvent (int eventID)
 		return;
 
 
-	// A colored triangle. Note that colors will come out differently
-	// in D3D9/11 and OpenGL, for example, since they expect color bytes
-	// in different ordering.
-	MyVertex verts[3] = {
-		{ -0.5f, 0.0f,  0, 0xFF00ff00 },
-		{  0.5f, 0.0f,  0, 0xFF00ff00 },
-		{  0,     1.0f ,  0, 0xFF0000ff },
+	// A plane
+	MyVertex verts[4] = {
+		{ -0.5f, -0.5f,  0, 0xFF00ff00 },
+		{  0.5f, -0.5f,  0, 0xFF00ff00 },
+		{  0.5f, 0.5f,  0, 0xFF0000ff },
+        { -0.5f, 0.5f, 0, 0xFF0000ff }
 	};
 
 
@@ -640,7 +639,7 @@ static void DoRendering (const float* worldMatrix, const float* identityMatrix, 
 		glEnableClientState (GL_COLOR_ARRAY);
 
 		// Draw!
-		glDrawArrays (GL_TRIANGLES, 0, 3);
+		glDrawArrays (GL_QUADS, 0, 4);
 
 		// update native texture from code
 		if (g_TexturePointer)
