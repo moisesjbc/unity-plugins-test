@@ -15,6 +15,10 @@ include_directories( ${OPENGL_INCLUDE_DIRS}  ${GLUT_INCLUDE_DIRS} )
 set( LIBRARIES ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} )
 
 # Library generation
+set( CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/../UnityProject/Assets/Plugins" )
 add_library( ${PROJECT_NAME} SHARED "RenderingPlugin.cpp" "UnityPluginInterface.h" )
+set_target_properties( ${PROJECT_NAME} PROPERTIES 
+	PREFIX ""
+	SUFFIX ".bundle"
+)
 target_link_libraries( ${PROJECT_NAME} ${LIBRARIES} )
-
