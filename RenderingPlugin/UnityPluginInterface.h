@@ -29,11 +29,7 @@
 
 
 // Which graphics device APIs we possibly support?
-#if UNITY_METRO
-#define SUPPORT_D3D11 1
-#elif UNITY_WIN
-#define SUPPORT_D3D9 1
-#define SUPPORT_D3D11 1 // comment this out if you don't have D3D11 header/library files
+#if UNITY_WIN
 #define SUPPORT_OPENGL 1
 #endif
 
