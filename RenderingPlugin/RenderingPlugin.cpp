@@ -6,6 +6,8 @@
 #include <math.h>
 #include <stdio.h>
 #include <vector>
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 // --------------------------------------------------------------------------
 // Include headers for the graphics APIs we support
@@ -50,6 +52,19 @@ static void DebugLog (const char* str)
 static float g_Time;
 
 extern "C" void EXPORT_API SetTimeFromUnity (float t) { g_Time = t; }
+
+static glm::mat4 modelMatrix_;
+static glm::mat4 viewMatrix_;
+static glm::mat4 projectionMatrix_;
+
+extern "C" void EXPORT_API SetMatricesFromUnity( float* modelMatrix,
+                                                float* viewMatrix,
+                                                float* projectionMatrix )
+{
+    modelMatrix_ = glm::make_mat4( modelMatrix );
+    viewMatrix_ = glm::make_mat4( viewMatrix );
+    projectionMatrix_ = glm::make_mat4( projectionMatrix );
+}
 
 
 
@@ -99,7 +114,10 @@ struct MyVertex {
 	unsigned int color;
 };
 static void SetDefaultGraphicsState ();
-static void DoRendering (const float* worldMatrix, const float* identityMatrix, float* projectionMatrix, const MyVertex* verts);
+static void DoRendering (const glm::mat4& worldMatrix,
+                         const glm::mat4& viewMatrix,
+                         const glm::mat4& projectionMatrix,
+                         const MyVertex* verts);
 
 
 extern "C" void EXPORT_API UnityRenderEvent (int eventID)
@@ -108,7 +126,6 @@ extern "C" void EXPORT_API UnityRenderEvent (int eventID)
 	if (g_DeviceType == -1)
 		return;
 
-    
 	// A plane
 	MyVertex verts[4] = {
 		{ -0.5f, -0.5f,  0, 0xFF00ff00 },
@@ -117,35 +134,9 @@ extern "C" void EXPORT_API UnityRenderEvent (int eventID)
         { -0.5f, 0.5f, 0, 0xFF0000ff }
 	};
 
-
-	// Some transformation matrices: rotate around Z axis for world
-	// matrix, identity view matrix, and identity projection matrix.
-	float phi = g_Time;
-	float cosPhi = cosf(phi);
-	float sinPhi = sinf(phi);
-
-	float worldMatrix[16] = {
-		cosPhi,-sinPhi,0,0,
-		sinPhi,cosPhi,0,0,
-		0,0,1,0,
-		0,0,0.7f,1,
-	};
-	float identityMatrix[16] = {
-		1,0,0,0,
-		0,1,0,0,
-		0,0,1,0,
-		0,0,0,1,
-	};
-	float projectionMatrix[16] = {
-		1,0,0,0,
-		0,1,0,0,
-		0,0,1,0,
-		0,0,0,1,
-	};
-
 	// Actual functions defined below
 	SetDefaultGraphicsState ();
-	DoRendering (worldMatrix, identityMatrix, projectionMatrix, verts);
+	DoRendering( modelMatrix_, viewMatrix_, projectionMatrix_, verts);
 }
 
 
@@ -209,20 +200,20 @@ static void FillTextureFromCode (int width, int height, int stride, unsigned cha
 }
 
 
-static void DoRendering (const float* worldMatrix, const float* identityMatrix, float* projectionMatrix, const MyVertex* verts)
+static void DoRendering ( const glm::mat4& modelMatrix,
+                         const glm::mat4& viewMatrix,
+                         const glm::mat4& projectionMatrix,
+                         const MyVertex* verts)
 {
 	// OpenGL case
 	if (g_DeviceType == kGfxRendererOpenGL)
 	{
 		// Transformation matrices
 		glMatrixMode (GL_MODELVIEW);
-		glLoadMatrixf (worldMatrix);
+        const glm::mat4 modelViewMatrix = viewMatrix * modelMatrix;
+        glLoadMatrixf ( glm::value_ptr( modelViewMatrix ) );
 		glMatrixMode (GL_PROJECTION);
-		// Tweak the projection matrix a bit to make it match what identity
-		// projection would do in D3D case.
-		projectionMatrix[10] = 2.0f;
-		projectionMatrix[14] = -1.0f;
-		glLoadMatrixf (projectionMatrix);
+        glLoadMatrixf ( glm::value_ptr( projectionMatrix ) );
 
 		// Vertex layout
 		glVertexPointer (3, GL_FLOAT, sizeof(verts[0]), &verts[0].x);
