@@ -177,6 +177,7 @@ static void SetDefaultGraphicsState ()
 		glDepthFunc (GL_LEQUAL);
 		glEnable (GL_DEPTH_TEST);
 		glDepthMask (GL_FALSE);
+        glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 	}
 }
 
