@@ -128,10 +128,10 @@ extern "C" void EXPORT_API UnityRenderEvent (int eventID)
 
 	// A plane
 	MyVertex verts[4] = {
-		{ -0.5f, -0.5f,  0, 0xFF00ff00 },
-		{  0.5f, -0.5f,  0, 0xFF00ff00 },
-		{  0.5f, 0.5f,  0, 0xFF0000ff },
-        { -0.5f, 0.5f, 0, 0xFF0000ff }
+		{ -0.5f, 0.0f, -0.5f, 0xFF00ff00 },
+		{  0.5f, 0.0f, -0.5f, 0xFF00ff00 },
+		{  0.5f, 0.0f, 0.5f, 0xFF00ff00 },
+        { -0.5f, 0.0f, 0.5f, 0xFF00ff00 }
 	};
 
 	// Actual functions defined below
