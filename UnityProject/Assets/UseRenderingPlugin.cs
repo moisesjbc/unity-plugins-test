@@ -74,7 +74,6 @@ public class UseRenderingPlugin : MonoBehaviour
 	}
 
 	public Matrix4x4 modelMatrix;
-	public Matrix4x4 viewMatrix;
 	public Matrix4x4 projectionMatrix;
 
 	private float[] GetRawArrayFromMatrix( Matrix4x4 matrix )
@@ -97,7 +96,7 @@ public class UseRenderingPlugin : MonoBehaviour
 
 			// Set matrices for the plugin
 			SetMatricesFromUnity( GetRawArrayFromMatrix( modelMatrix ), 
-			                     GetRawArrayFromMatrix( viewMatrix ),
+			                     GetRawArrayFromMatrix( Camera.current.worldToCameraMatrix ),
 			                     GetRawArrayFromMatrix( projectionMatrix ) );
 
 			// Issue a plugin event with arbitrary integer identifier.
