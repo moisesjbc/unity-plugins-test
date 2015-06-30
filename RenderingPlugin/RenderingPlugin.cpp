@@ -8,6 +8,7 @@
 #include <vector>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <array>
 
 // --------------------------------------------------------------------------
 // Include headers for the graphics APIs we support
@@ -56,6 +57,7 @@ extern "C" void EXPORT_API SetTimeFromUnity (float t) { g_Time = t; }
 static glm::mat4 modelMatrix_;
 static glm::mat4 viewMatrix_;
 static glm::mat4 projectionMatrix_;
+static glm::vec4 cameraPos_;
 
 extern "C" void EXPORT_API SetMatricesFromUnity( float* modelMatrix,
                                                 float* viewMatrix,
@@ -64,6 +66,7 @@ extern "C" void EXPORT_API SetMatricesFromUnity( float* modelMatrix,
     modelMatrix_ = glm::make_mat4( modelMatrix );
     viewMatrix_ = glm::make_mat4( viewMatrix );
     projectionMatrix_ = glm::make_mat4( projectionMatrix );
+    cameraPos_ = glm::inverse( viewMatrix_ ) * glm::vec4( 0.0f, 0.0f, 0.0f, 1.0f );
 }
 
 
@@ -127,16 +130,27 @@ extern "C" void EXPORT_API UnityRenderEvent (int eventID)
 		return;
 
 	// A plane
-	MyVertex verts[4] = {
-		{ -0.5f, 0.0f, -0.5f, 0xFF00ff00 },
+    std::vector< MyVertex > vertices;
+    MyVertex srcVertices[] =
+    {
+        { -0.5f, 0.0f, -0.5f, 0xFF00ff00 },
 		{  0.5f, 0.0f, -0.5f, 0xFF00ff00 },
 		{  0.5f, 0.0f, 0.5f, 0xFF00ff00 },
         { -0.5f, 0.0f, 0.5f, 0xFF00ff00 }
-	};
+    };
+    
+    // Generate multiple versions of the plane with different colors.
+    for( unsigned int currentLoD = 0; currentLoD < 3; currentLoD++ ){
+        for( unsigned int i = 0; i < 4; i++ ){
+            MyVertex currentVertex = srcVertices[i];
+            currentVertex.color = 0xFF000000 | ( 0x000000ff << currentLoD * 8 );
+            vertices.push_back( currentVertex );
+        }
+    }
 
 	// Actual functions defined below
 	SetDefaultGraphicsState ();
-	DoRendering( modelMatrix_, viewMatrix_, projectionMatrix_, verts);
+	DoRendering( modelMatrix_, viewMatrix_, projectionMatrix_, vertices.data() );
 }
 
 
@@ -221,8 +235,20 @@ static void DoRendering ( const glm::mat4& modelMatrix,
 		glColorPointer (4, GL_UNSIGNED_BYTE, sizeof(verts[0]), &verts[0].color);
 		glEnableClientState (GL_COLOR_ARRAY);
 
-		// Draw!
-		glDrawArrays (GL_QUADS, 0, 4);
+        // Compute the distance between the camera and the plane.
+        // TODO: Compute real distance.
+        const float distance = glm::length( cameraPos_ );
+        
+        // Draw a version of the plane or another depending on the distance between
+        // the camera and the plane.
+        if( distance > 3.0f ){
+            glDrawArrays (GL_QUADS, 0, 4);
+        }else if( distance > 2.0f ){
+            glDrawArrays( GL_QUADS, 4, 4);
+        }else{
+            glDrawArrays( GL_QUADS, 8, 4);
+        }
+		
 
 		// update native texture from code
 		if (g_TexturePointer)

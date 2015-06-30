@@ -99,6 +99,7 @@ GameObject:
   - 92: {fileID: 12}
   - 124: {fileID: 13}
   - 81: {fileID: 11}
+  - 114: {fileID: 8}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -106,6 +107,17 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &8
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 7}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d2c58f5b628e45fa818f817a4fcb600, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &9
 Transform:
   m_ObjectHideFlags: 0
@@ -451,23 +463,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   modelMatrix:
-    e00: 1
-    e01: 0
-    e02: 0
-    e03: 0
-    e10: 0
-    e11: 1
-    e12: 0
-    e13: 0
-    e20: 0
-    e21: 0
-    e22: 1
-    e23: 0
-    e30: 0
-    e31: 0
-    e32: 0
-    e33: 1
-  projectionMatrix:
     e00: 1
     e01: 0
     e02: 0
