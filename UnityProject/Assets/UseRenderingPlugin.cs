@@ -39,6 +39,15 @@ public class UseRenderingPlugin : MonoBehaviour
 #endif
 
 
+	#if UNITY_IPHONE && !UNITY_EDITOR
+	[DllImport ("__Internal")]
+	#else
+	[DllImport ("RenderingPlugin")]
+	#endif
+	private static extern void SetMatricesFromUnity( float[] modelMatrix, float[] viewMatrix, float[] projectionMatrix );
+
+
+
 	IEnumerator Start () {
 		CreateTextureAndPassToPlugin();
 		yield return StartCoroutine("CallPluginAtEndOfFrames");
@@ -64,6 +73,19 @@ public class UseRenderingPlugin : MonoBehaviour
 	#endif
 	}
 
+	public Matrix4x4 modelMatrix;
+	public Matrix4x4 viewMatrix;
+	public Matrix4x4 projectionMatrix;
+
+	private float[] GetRawArrayFromMatrix( Matrix4x4 matrix )
+	{
+		float[] rawArray = new float[16];
+		for (int i = 0; i < 16; i++) {
+			rawArray[i] = matrix[i];
+		}
+		return rawArray;
+	}
+
 	private IEnumerator CallPluginAtEndOfFrames()
 	{
 		while (true) {
@@ -72,6 +94,11 @@ public class UseRenderingPlugin : MonoBehaviour
 
 			// Set time for the plugin
 			SetTimeFromUnity (Time.timeSinceLevelLoad);
+
+			// Set matrices for the plugin
+			SetMatricesFromUnity( GetRawArrayFromMatrix( modelMatrix ), 
+			                     GetRawArrayFromMatrix( viewMatrix ),
+			                     GetRawArrayFromMatrix( projectionMatrix ) );
 
 			// Issue a plugin event with arbitrary integer identifier.
 			// The plugin can distinguish between different
