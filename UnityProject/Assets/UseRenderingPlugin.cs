@@ -32,11 +32,7 @@ public class UseRenderingPlugin : MonoBehaviour
 #else
 	[DllImport ("RenderingPlugin")]
 #endif
-#if UNITY_GLES_RENDERER
 	private static extern void SetTextureFromUnity(System.IntPtr texture, int w, int h);
-#else
-	private static extern void SetTextureFromUnity(System.IntPtr texture);
-#endif
 
 
 	#if UNITY_IPHONE && !UNITY_EDITOR
@@ -55,9 +51,19 @@ public class UseRenderingPlugin : MonoBehaviour
 	private static extern void InitPlugin ();
 
 
+	#if UNITY_IPHONE && !UNITY_EDITOR
+	[DllImport ("__Internal")]
+	#else
+	[DllImport ("RenderingPlugin")]
+	#endif
+	private static extern int getLastOpenGLErrorNumber ();
+
+
+
 	IEnumerator Start () {
-		CreateTextureAndPassToPlugin();
 		InitPlugin ();
+		Debug.Log( getLastOpenGLErrorNumber() );
+		CreateTextureAndPassToPlugin();
 		yield return StartCoroutine("CallPluginAtEndOfFrames");
 	}
 
@@ -74,11 +80,11 @@ public class UseRenderingPlugin : MonoBehaviour
 		GetComponent<Renderer>().material.mainTexture = tex;
 
 		// Pass texture pointer to the plugin
-	#if UNITY_GLES_RENDERER
+	//#if UNITY_GLES_RENDERER
 		SetTextureFromUnity (tex.GetNativeTexturePtr(), tex.width, tex.height);
-	#else
+	/*#else
 		SetTextureFromUnity (tex.GetNativeTexturePtr());
-	#endif
+	#endif*/
 	}
 
 	public Matrix4x4 modelMatrix;

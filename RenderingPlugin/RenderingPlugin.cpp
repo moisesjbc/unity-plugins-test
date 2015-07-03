@@ -9,6 +9,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <array>
+#include <string>
 
 // --------------------------------------------------------------------------
 // Include headers for the graphics APIs we support
@@ -29,7 +30,6 @@
 // --------------------------------------------------------------------------
 // Helper utilities
 
-
 // Prints a string
 static void DebugLog (const char* str)
 {
@@ -45,6 +45,12 @@ static void DebugLog (const char* str)
 #define SAFE_RELEASE(a) if (a) { a->Release(); a = NULL; }
 #endif
 
+static std::string errorsLog;
+
+extern "C" int getLastOpenGLErrorNumber()
+{
+    return glGetError();
+}
 
 
 // --------------------------------------------------------------------------
@@ -70,20 +76,73 @@ extern "C" void EXPORT_API SetMatricesFromUnity( float* modelMatrix,
 }
 
 
+// --------------------------------------------------------------------------
+// shaders
+
+#define VPROG_SRC(ver, attr, varying)								\
+ver																\
+attr " highp vec3 pos;\n"										\
+attr " lowp vec4 color;\n"										\
+"\n"															\
+varying " lowp vec4 ocolor;\n"									\
+"\n"															\
+"uniform highp mat4 worldMatrix;\n"								\
+"uniform highp mat4 projMatrix;\n"								\
+"\n"															\
+"void main()\n"													\
+"{\n"															\
+"	gl_Position = (projMatrix * worldMatrix) * vec4(pos,1);\n"	\
+"	ocolor = color;\n"											\
+"}\n"															\
+
+static const char* kGlesVProgTextGLES2		= VPROG_SRC("\n", "attribute", "varying");
+static const char* kGlesVProgTextGLES3		= VPROG_SRC("#version 300 es\n", "in", "out");
+
+#undef VPROG_SRC
+
+#define FSHADER_SRC(ver, varying, outDecl, outVar)	\
+ver												\
+outDecl											\
+varying " lowp vec4 ocolor;\n"					\
+"\n"											\
+"void main()\n"									\
+"{\n"											\
+"	" outVar " = ocolor;\n"						\
+"}\n"											\
+
+static const char* kGlesFShaderTextGLES2	= FSHADER_SRC("\n", "varying", "\n", "gl_FragColor");
+static const char* kGlesFShaderTextGLES3	= FSHADER_SRC("#version 300 es\n", "in", "out lowp vec4 fragColor;\n", "fragColor");
+
+#undef FSHADER_SRC
+
+static GLuint	g_VProg;
+static GLuint	g_FShader;
+static GLuint	g_Program;
+static int		g_WorldMatrixUniformIndex;
+static int		g_ProjMatrixUniformIndex;
+
+static GLuint CreateShader(GLenum type, const char* text)
+{
+    GLuint ret = glCreateShader(type);
+    glShaderSource(ret, 1, &text, NULL);
+    glCompileShader(ret);
+    
+    return ret;
+}
+
 
 // --------------------------------------------------------------------------
 // SetTextureFromUnity, an example function we export which is called by one of the scripts.
 
-static void* g_TexturePointer;
-
-extern "C" void EXPORT_API SetTextureFromUnity (void* texturePtr)
+static void*	g_TexturePointer	= 0;
+static int		g_TexWidth			= 0;
+static int		g_TexHeight			= 0;
+extern "C" void SetTextureFromUnity(void* texturePtr, int w, int h)
 {
-	// A script calls this at initialization time; just remember the texture pointer here.
-	// Will update texture pixels each frame from the plugin rendering event (texture update
-	// needs to happen on the rendering thread).
-	g_TexturePointer = texturePtr;
+    g_TexturePointer	= texturePtr;
+    g_TexWidth			= w;
+    g_TexHeight			= h;
 }
-
 
 
 // --------------------------------------------------------------------------
@@ -93,14 +152,23 @@ static int g_DeviceType = -1;
 
 extern "C" void EXPORT_API UnitySetGraphicsDevice (void* device, int deviceType, int eventType)
 {
-	// If we've got an OpenGL device, remember device type. There's no OpenGL
-	// "device pointer" to remember since OpenGL always operates on a currently set
-	// global context.
-	if (deviceType == kGfxRendererOpenGL)
-	{
-		DebugLog ("Set OpenGL graphics device\n");
-		g_DeviceType = deviceType;
-	}
+    DebugLog("OpenGLES 2.0 device\n");
+    ::printf("OpenGLES 2.0 device\n");
+    
+    g_VProg		= CreateShader(GL_VERTEX_SHADER, kGlesVProgTextGLES2);
+    g_FShader	= CreateShader(GL_FRAGMENT_SHADER, kGlesFShaderTextGLES2);
+    
+    g_Program = glCreateProgram();
+    glBindAttribLocation(g_Program, 1, "pos");
+    glBindAttribLocation(g_Program, 2, "color");
+    glAttachShader(g_Program, g_VProg);
+    glAttachShader(g_Program, g_FShader);
+    glLinkProgram(g_Program);
+    
+    g_WorldMatrixUniformIndex	= glGetUniformLocation(g_Program, "worldMatrix");
+    g_ProjMatrixUniformIndex	= glGetUniformLocation(g_Program, "projMatrix");
+    
+    g_DeviceType = deviceType;
 }
 
 
@@ -240,17 +308,12 @@ extern "C" void EXPORT_API UnityRenderEvent (int eventID)
 
 static void SetDefaultGraphicsState ()
 {
-	if (g_DeviceType == kGfxRendererOpenGL)
-	{
-		glDisable (GL_CULL_FACE);
-		glDisable (GL_LIGHTING);
-		glDisable (GL_BLEND);
-		glDisable (GL_ALPHA_TEST);
-		glDepthFunc (GL_LEQUAL);
-		glEnable (GL_DEPTH_TEST);
-		glDepthMask (GL_FALSE);
-        glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
-	}
+    glDisable(GL_CULL_FACE);
+    glDisable(GL_BLEND);
+    glDepthFunc(GL_LEQUAL);
+    glEnable(GL_DEPTH_TEST);
+    glDepthMask(GL_FALSE);
+    glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 }
 
 
@@ -292,21 +355,26 @@ static void DoRendering ( const glm::mat4& modelMatrix,
                          const glm::mat4& projectionMatrix,
                          const MyVertex* verts)
 {
-	// OpenGL case
-	if (g_DeviceType == kGfxRendererOpenGL)
-	{
-		// Transformation matrices
-		glMatrixMode (GL_MODELVIEW);
+        // Set shader program
+        glUseProgram(g_Program);
+        
+        // Send modelview matrix to shader.
         const glm::mat4 modelViewMatrix = viewMatrix * modelMatrix;
-        glLoadMatrixf ( glm::value_ptr( modelViewMatrix ) );
-		glMatrixMode (GL_PROJECTION);
-        glLoadMatrixf ( glm::value_ptr( projectionMatrix ) );
-
-		// Vertex layout
-		glVertexPointer (3, GL_FLOAT, sizeof(verts[0]), &verts[0].x);
-		glEnableClientState (GL_VERTEX_ARRAY);
-		glColorPointer (4, GL_UNSIGNED_BYTE, sizeof(verts[0]), &verts[0].color);
-		glEnableClientState (GL_COLOR_ARRAY);
+        glUniformMatrix4fv(g_WorldMatrixUniformIndex, 1, GL_FALSE, glm::value_ptr( modelViewMatrix ) );
+        
+        // Send projection matrix to shader.
+        glUniformMatrix4fv(g_ProjMatrixUniformIndex, 1, GL_FALSE, glm::value_ptr( projectionMatrix ) );
+        
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        
+        // Vertex layout.
+        const int stride = 3*sizeof(float) + sizeof(unsigned int);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (const float*)verts);
+        
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(1, 2, GL_UNSIGNED_INT, GL_TRUE, stride, (const float*)verts + 3);
 
         // Compute the distance between the camera and the plane.
         // TODO: Compute real distance.
@@ -322,19 +390,15 @@ static void DoRendering ( const glm::mat4& modelMatrix,
             glDrawArrays( GL_QUADS, 20, 64 );
         }
 
-		// update native texture from code
-		if (g_TexturePointer)
-		{
-			GLuint gltex = (GLuint)(size_t)(g_TexturePointer);
-			glBindTexture (GL_TEXTURE_2D, gltex);
-			int texWidth, texHeight;
-			glGetTexLevelParameteriv (GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &texWidth);
-			glGetTexLevelParameteriv (GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &texHeight);
-
-			unsigned char* data = new unsigned char[texWidth*texHeight*4];
-			FillTextureFromCode (texWidth, texHeight, texHeight*4, data);
-			glTexSubImage2D (GL_TEXTURE_2D, 0, 0, 0, texWidth, texHeight, GL_RGBA, GL_UNSIGNED_BYTE, data);
-			delete[] data;
-		}
-	}
+        // update native texture from code
+        if (g_TexturePointer)
+        {
+            GLuint gltex = (GLuint)(size_t)(g_TexturePointer);
+            glBindTexture(GL_TEXTURE_2D, gltex);
+            
+            unsigned char* data = new unsigned char[g_TexWidth*g_TexHeight*4];
+            FillTextureFromCode(g_TexWidth, g_TexHeight, g_TexHeight*4, data);
+            glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, g_TexWidth, g_TexHeight, GL_RGBA, GL_UNSIGNED_BYTE, data);
+            delete[] data;
+        }
 }
