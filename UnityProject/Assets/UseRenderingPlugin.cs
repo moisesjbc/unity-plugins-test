@@ -47,9 +47,17 @@ public class UseRenderingPlugin : MonoBehaviour
 	private static extern void SetMatricesFromUnity( float[] modelMatrix, float[] viewMatrix, float[] projectionMatrix );
 
 
+	#if UNITY_IPHONE && !UNITY_EDITOR
+	[DllImport ("__Internal")]
+	#else
+	[DllImport ("RenderingPlugin")]
+	#endif
+	private static extern void InitPlugin ();
+
 
 	IEnumerator Start () {
 		CreateTextureAndPassToPlugin();
+		InitPlugin ();
 		yield return StartCoroutine("CallPluginAtEndOfFrames");
 	}
 

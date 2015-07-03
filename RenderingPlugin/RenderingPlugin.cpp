@@ -115,6 +115,14 @@ extern "C" void EXPORT_API UnitySetGraphicsDevice (void* device, int deviceType,
 struct MyVertex {
 	float x, y, z;
 	unsigned int color;
+    
+    MyVertex() : x(0.0f), y(0.0f), z(0.0f), color(0) {}
+    MyVertex( float x, float y, float z, unsigned int color ) :
+        x(x),
+        y(y),
+        z(z),
+        color(color)
+    {}
 };
 static void SetDefaultGraphicsState ();
 static void DoRendering (const glm::mat4& worldMatrix,
@@ -122,32 +130,96 @@ static void DoRendering (const glm::mat4& worldMatrix,
                          const glm::mat4& projectionMatrix,
                          const MyVertex* verts);
 
+void subdividePlane( const MyVertex* planeVertices,
+                    std::vector<MyVertex>& vertices )
+{
+    MyVertex middleVertices[4];
+    for( int i = 0; i < 4; i++ ){
+        const MyVertex& currentVertex = planeVertices[i];
+        const MyVertex& nextVertex = planeVertices[(i+1)%4];
+        const MyVertex middleVertex(
+                                    ( currentVertex.x + nextVertex.x ) / 2.0f,
+                                    ( currentVertex.y + nextVertex.y ) / 2.0f,
+                                    ( currentVertex.z + nextVertex.z ) / 2.0f,
+                                    ( currentVertex.color + nextVertex.color ) / 2.0f
+                                    );
+        
+        middleVertices[i] = middleVertex;
+    }
+    // Compute plane centroid
+    MyVertex planeCentroid;
+    for( int i = 0; i < 4; i++ )
+    {
+        planeCentroid.x += planeVertices[i].x;
+        planeCentroid.y += planeVertices[i].y;
+        planeCentroid.z += planeVertices[i].z;
+        planeCentroid.color += planeVertices[i].color;
+    }
+    planeCentroid.x /= 4.0f;
+    planeCentroid.y /= 4.0f;
+    planeCentroid.z /= 4.0f;
+    planeCentroid.color /= 4.0f;
+    
+    // Subplane 0
+    vertices.push_back( middleVertices[3] );
+    vertices.push_back( planeVertices[0] );
+    vertices.push_back( middleVertices[0] );
+    vertices.push_back( planeCentroid );
+    
+    // Subplane 1
+    vertices.push_back( middleVertices[0] );
+    vertices.push_back( planeVertices[1] );
+    vertices.push_back( middleVertices[1] );
+    vertices.push_back( planeCentroid );
+    
+    // Subplane 2
+    vertices.push_back( middleVertices[1] );
+    vertices.push_back( planeVertices[2] );
+    vertices.push_back( middleVertices[2] );
+    vertices.push_back( planeCentroid );
+    
+    // Subplane 3
+    vertices.push_back( middleVertices[2] );
+    vertices.push_back( planeVertices[3] );
+    vertices.push_back( middleVertices[3] );
+    vertices.push_back( planeCentroid );
+}
+
+std::vector< MyVertex > vertices;
+
+extern "C" void EXPORT_API InitPlugin()
+{
+    // A plane.
+    MyVertex srcVertices[] =
+    {
+        MyVertex( -0.5f, 0.0f, -0.5f, 0xFF00ff00 ),
+        MyVertex( 0.5f, 0.0f, -0.5f, 0xFF00ff00 ),
+        MyVertex(  0.5f, 0.0f, 0.5f, 0xFF00ff00 ),
+        MyVertex( -0.5f, 0.0f, 0.5f, 0xFF00ff00 )
+    };
+    
+    // Copy original plane to vertices vector
+    for( int i = 0; i < 4; i++ ){
+        vertices.push_back( srcVertices[i] );
+    }
+    
+    // Subdivide plane (2).
+    subdividePlane( &vertices[0], vertices );
+    
+    // Subdivide plane (3).
+    subdividePlane( &vertices[4], vertices );
+    subdividePlane( &vertices[8], vertices );
+    subdividePlane( &vertices[12], vertices );
+    subdividePlane( &vertices[16], vertices );
+}
+
 
 extern "C" void EXPORT_API UnityRenderEvent (int eventID)
 {
 	// Unknown graphics device type? Do nothing.
 	if (g_DeviceType == -1)
 		return;
-
-	// A plane
-    std::vector< MyVertex > vertices;
-    MyVertex srcVertices[] =
-    {
-        { -0.5f, 0.0f, -0.5f, 0xFF00ff00 },
-		{  0.5f, 0.0f, -0.5f, 0xFF00ff00 },
-		{  0.5f, 0.0f, 0.5f, 0xFF00ff00 },
-        { -0.5f, 0.0f, 0.5f, 0xFF00ff00 }
-    };
     
-    // Generate multiple versions of the plane with different colors.
-    for( unsigned int currentLoD = 0; currentLoD < 3; currentLoD++ ){
-        for( unsigned int i = 0; i < 4; i++ ){
-            MyVertex currentVertex = srcVertices[i];
-            currentVertex.color = 0xFF000000 | ( 0x000000ff << currentLoD * 8 );
-            vertices.push_back( currentVertex );
-        }
-    }
-
 	// Actual functions defined below
 	SetDefaultGraphicsState ();
 	DoRendering( modelMatrix_, viewMatrix_, projectionMatrix_, vertices.data() );
@@ -245,11 +317,10 @@ static void DoRendering ( const glm::mat4& modelMatrix,
         if( distance > 3.0f ){
             glDrawArrays (GL_QUADS, 0, 4);
         }else if( distance > 2.0f ){
-            glDrawArrays( GL_QUADS, 4, 4);
+            glDrawArrays( GL_QUADS, 4, 16 );
         }else{
-            glDrawArrays( GL_QUADS, 8, 4);
+            glDrawArrays( GL_QUADS, 20, 64 );
         }
-		
 
 		// update native texture from code
 		if (g_TexturePointer)
