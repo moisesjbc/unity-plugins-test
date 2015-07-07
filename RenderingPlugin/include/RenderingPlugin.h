@@ -1,4 +1,5 @@
-#pragma once
+#ifndef RENDERING_PLUGIN_H
+#define RENDERING_PLUGIN_H
 
 // Which platform we are on?
 #if _MSC_VER
@@ -70,13 +71,16 @@ enum GfxDeviceEventType {
 };
 
 
-// If exported by a plugin, this function will be called when graphics device is created, destroyed,
-// before it's being reset (i.e. resolution changed), after it's being reset, etc.
-extern "C" void EXPORT_API UnitySetGraphicsDevice(void* device, int deviceType, int eventType);
+extern "C"
+{
+    void EXPORT_API InitPlugin();
+    void EXPORT_API SetTimeFromUnity (float t);
+    void EXPORT_API SetMatricesFromUnity( float* modelMatrix,
+                                            float* viewMatrix,
+                                            float* projectionMatrix );
+    void EXPORT_API SetTextureFromUnity (void* texturePtr);
+    void EXPORT_API UnitySetGraphicsDevice ( void* device, int deviceType, int eventType );
+    void EXPORT_API UnityRenderEvent (int eventID);
+}
 
-// If exported by a plugin, this function will be called for GL.IssuePluginEvent script calls.
-// The function will be called on a rendering thread; note that when multithreaded rendering is used,
-// the rendering thread WILL BE DIFFERENT from the thread that all scripts & other game logic happens!
-// You have to ensure any synchronization with other plugin script calls is properly done by you.
-extern "C" void EXPORT_API UnityRenderEvent(int eventID);
-
+#endif // RENDERING_PLUGIN_H
