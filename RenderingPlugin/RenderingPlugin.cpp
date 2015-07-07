@@ -444,7 +444,7 @@ static void DoRendering ( const glm::mat4& modelMatrix,
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (const float*)verts);
         
         glEnableVertexAttribArray(1);
-        glVertexAttribPointer(1, 2, GL_UNSIGNED_INT, GL_TRUE, stride, (const float*)verts + 3);
+        glVertexAttribIPointerEXT(1, 4, GL_UNSIGNED_BYTE, stride, (const float*)verts + 3);
 
         // Compute the distance between the camera and the plane.
         // TODO: Compute real distance.
