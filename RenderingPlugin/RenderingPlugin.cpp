@@ -210,8 +210,8 @@ extern "C" void EXPORT_API UnitySetGraphicsDevice (void* device, int deviceType,
     logFile << "g_Program: " << g_Program << std::endl;
     logFile.close();
     
-    glBindAttribLocation(g_Program, 1, "pos");
-    glBindAttribLocation(g_Program, 2, "color");
+    glBindAttribLocation(g_Program, 0, "pos");
+    glBindAttribLocation(g_Program, 1, "color");
     glAttachShader(g_Program, g_VProg);
     glAttachShader(g_Program, g_FShader);
     glLinkProgram(g_Program);
