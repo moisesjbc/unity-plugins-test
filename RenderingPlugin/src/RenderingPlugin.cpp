@@ -189,6 +189,15 @@ void EXPORT_API SetTextureFromUnity(void* texturePtr, int w, int h)
 }
 
 
+void LogOpenGLVersion()
+{
+    const GLubyte* oglVersion = glGetString( GL_VERSION );
+    
+    std::ofstream logFile( "rendering-plugin-log.txt", std::ofstream::out | std::ofstream::app );
+    logFile << "oglVersion: " << oglVersion << std::endl;
+    logFile.close();
+}
+
 // --------------------------------------------------------------------------
 // UnitySetGraphicsDevice
 
@@ -199,6 +208,8 @@ void EXPORT_API UnitySetGraphicsDevice (void* device, int deviceType, int eventT
     // Truncate log file.
     std::ofstream logFile( "rendering-plugin-log.txt" );
     logFile.close();
+    
+    LogOpenGLVersion();
     
     DebugLog("OpenGLES 2.0 device\n");
     ::printf("OpenGLES 2.0 device\n");
