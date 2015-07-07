@@ -29,7 +29,9 @@ set_target_properties( ${PROJECT_NAME} PROPERTIES
 target_link_libraries( ${PROJECT_NAME} ${LIBRARIES} )
 
 # Test program generation
-set( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR} )
-add_executable( "tests" "src/tests.cpp" )
-add_dependencies( "tests" ${PROJECT_NAME} )
-target_link_libraries( "tests" "${LIBRARIES};${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${PROJECT_NAME}.bundle;-lSDL2" )
+if( BUILD_TESTS )
+    set( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR} )
+    add_executable( "tests" "src/tests.cpp" )
+    add_dependencies( "tests" ${PROJECT_NAME} )
+    target_link_libraries( "tests" "${LIBRARIES};${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${PROJECT_NAME}.bundle;-lSDL2" )
+endif( BUILD_TESTS )
