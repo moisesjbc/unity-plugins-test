@@ -10,6 +10,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <array>
 #include <string>
+#include <fstream>
 
 // --------------------------------------------------------------------------
 // Include headers for the graphics APIs we support
@@ -45,11 +46,38 @@ static void DebugLog (const char* str)
 #define SAFE_RELEASE(a) if (a) { a->Release(); a = NULL; }
 #endif
 
-static std::string errorsLog;
+static std::string openGLErrorsLog;
 
-extern "C" int getLastOpenGLErrorNumber()
+extern "C" const char* getOpenGLErrorsLog()
 {
-    return glGetError();
+    return openGLErrorsLog.c_str();
+}
+
+
+#define OPENGL_ERROR_CASE(str,errorCode) case(errorCode): str=#errorCode; break;
+
+void checkOpenGLStatus( const char* situation )
+{
+    std::ofstream logFile( "rendering-plugin-log.txt", std::ofstream::out | std::ofstream::app );
+    GLenum errorCode = glGetError();
+    std::string errorMessage;
+    switch( errorCode ){
+        OPENGL_ERROR_CASE( errorMessage, GL_NO_ERROR );
+        OPENGL_ERROR_CASE( errorMessage, GL_INVALID_ENUM );
+        OPENGL_ERROR_CASE( errorMessage, GL_INVALID_VALUE );
+        OPENGL_ERROR_CASE( errorMessage, GL_INVALID_OPERATION );
+        OPENGL_ERROR_CASE( errorMessage, GL_INVALID_FRAMEBUFFER_OPERATION );
+        OPENGL_ERROR_CASE( errorMessage, GL_OUT_OF_MEMORY );
+        OPENGL_ERROR_CASE( errorMessage, GL_STACK_UNDERFLOW );
+        OPENGL_ERROR_CASE( errorMessage, GL_STACK_OVERFLOW );
+        default:
+            errorMessage = "Unknown error";
+        break;
+    }
+        
+    logFile << errorMessage.c_str() << " at " << situation << "\n";
+    
+    logFile.close();
 }
 
 
@@ -81,13 +109,13 @@ extern "C" void EXPORT_API SetMatricesFromUnity( float* modelMatrix,
 
 #define VPROG_SRC(ver, attr, varying)								\
 ver																\
-attr " highp vec3 pos;\n"										\
-attr " lowp vec4 color;\n"										\
+attr " vec3 pos;\n"										\
+attr " vec4 color;\n"										\
 "\n"															\
-varying " lowp vec4 ocolor;\n"									\
+varying " vec4 ocolor;\n"									\
 "\n"															\
-"uniform highp mat4 worldMatrix;\n"								\
-"uniform highp mat4 projMatrix;\n"								\
+"uniform mat4 worldMatrix;\n"								\
+"uniform mat4 projMatrix;\n"								\
 "\n"															\
 "void main()\n"													\
 "{\n"															\
@@ -103,7 +131,7 @@ static const char* kGlesVProgTextGLES3		= VPROG_SRC("#version 300 es\n", "in", "
 #define FSHADER_SRC(ver, varying, outDecl, outVar)	\
 ver												\
 outDecl											\
-varying " lowp vec4 ocolor;\n"					\
+varying " vec4 ocolor;\n"					\
 "\n"											\
 "void main()\n"									\
 "{\n"											\
@@ -117,7 +145,7 @@ static const char* kGlesFShaderTextGLES3	= FSHADER_SRC("#version 300 es\n", "in"
 
 static GLuint	g_VProg;
 static GLuint	g_FShader;
-static GLuint	g_Program;
+static GLuint	g_Program = 0;
 static int		g_WorldMatrixUniformIndex;
 static int		g_ProjMatrixUniformIndex;
 
@@ -126,6 +154,19 @@ static GLuint CreateShader(GLenum type, const char* text)
     GLuint ret = glCreateShader(type);
     glShaderSource(ret, 1, &text, NULL);
     glCompileShader(ret);
+    
+    GLint result;
+    glGetShaderiv( ret, GL_COMPILE_STATUS, &result );
+    
+    std::ofstream logFile( "rendering-plugin-log.txt", std::ofstream::out | std::ofstream::app );
+    logFile << "Shader: " << std::endl << std::endl << text << std::endl << std::endl;
+    logFile << "Shader compiler status: " << result << std::endl;
+    if( !result ){
+        GLchar errorLog[1024] = {0};
+        glGetShaderInfoLog(ret, 1024, NULL, errorLog);
+        logFile << errorLog << std::endl;
+    }
+    logFile.close();
     
     return ret;
 }
@@ -152,21 +193,50 @@ static int g_DeviceType = -1;
 
 extern "C" void EXPORT_API UnitySetGraphicsDevice (void* device, int deviceType, int eventType)
 {
+    // Truncate log file.
+    std::ofstream logFile( "rendering-plugin-log.txt" );
+    logFile.close();
+    
     DebugLog("OpenGLES 2.0 device\n");
     ::printf("OpenGLES 2.0 device\n");
+    checkOpenGLStatus( "UnitySetGraphicsDevice - 1" );
     
     g_VProg		= CreateShader(GL_VERTEX_SHADER, kGlesVProgTextGLES2);
     g_FShader	= CreateShader(GL_FRAGMENT_SHADER, kGlesFShaderTextGLES2);
+    checkOpenGLStatus( "UnitySetGraphicsDevice - 2" );
     
     g_Program = glCreateProgram();
+    logFile.open( "rendering-plugin-log.txt", std::ofstream::out | std::ofstream::app );
+    logFile << "g_Program: " << g_Program << std::endl;
+    logFile.close();
+    
     glBindAttribLocation(g_Program, 1, "pos");
     glBindAttribLocation(g_Program, 2, "color");
     glAttachShader(g_Program, g_VProg);
     glAttachShader(g_Program, g_FShader);
     glLinkProgram(g_Program);
+    int result;
+    
+    glGetProgramiv( g_Program, GL_LINK_STATUS, &result );
+    logFile.open( "rendering-plugin-log.txt", std::ofstream::out | std::ofstream::app );
+    logFile << "Shader link status: " << result << std::endl;
+    if( !result ){
+        GLchar errorLog[1024] = {0};
+        glGetProgramInfoLog(g_Program, 1024, NULL, errorLog);
+        logFile << errorLog << std::endl;
+    }
+    logFile.close();
+    
+    glGetProgramiv( g_Program, GL_ATTACHED_SHADERS, &result );
+    logFile.open( "rendering-plugin-log.txt", std::ofstream::out | std::ofstream::app );
+    logFile << "Attached shaders status: " << result << std::endl;
+    logFile.close();
+    
+    checkOpenGLStatus( "UnitySetGraphicsDevice - 3" );
     
     g_WorldMatrixUniformIndex	= glGetUniformLocation(g_Program, "worldMatrix");
     g_ProjMatrixUniformIndex	= glGetUniformLocation(g_Program, "projMatrix");
+    checkOpenGLStatus( "UnitySetGraphicsDevice - 4" );
     
     g_DeviceType = deviceType;
 }

@@ -56,17 +56,18 @@ public class UseRenderingPlugin : MonoBehaviour
 	#else
 	[DllImport ("RenderingPlugin")]
 	#endif
-	private static extern int getLastOpenGLErrorNumber ();
+	private static extern char[] getOpenGLErrorsLog ();
 
 
 
 	IEnumerator Start () {
+		string errorLog = new string( getOpenGLErrorsLog() );
+		Debug.Log( errorLog );
 		InitPlugin ();
-		Debug.Log( getLastOpenGLErrorNumber() );
+		Debug.Log( new string( getOpenGLErrorsLog() ) );
 		CreateTextureAndPassToPlugin();
 		yield return StartCoroutine("CallPluginAtEndOfFrames");
 	}
-
 	private void CreateTextureAndPassToPlugin()
 	{
 		// Create a texture
