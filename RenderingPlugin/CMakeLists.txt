@@ -1,6 +1,9 @@
 cmake_minimum_required( VERSION 2.8 )
 set( CMAKE_BUILD_TYPE Release )
 
+# Compiler flags
+set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -std=c++11" )
+
 # Project info
 project( RenderingPlugin )
 set( PROJECT_VERSION_MAJOR 0 )
@@ -17,7 +20,7 @@ set( LIBRARIES ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} )
 # Library generation
 set( CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/../UnityProject/Assets/Plugins" )
 add_library( ${PROJECT_NAME} SHARED "RenderingPlugin.cpp" "UnityPluginInterface.h" )
-set_target_properties( ${PROJECT_NAME} PROPERTIES 
+set_target_properties( ${PROJECT_NAME} PROPERTIES
 	PREFIX ""
 	SUFFIX ".bundle"
 )
