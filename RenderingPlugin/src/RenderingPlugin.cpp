@@ -1,7 +1,6 @@
 // Example low level rendering Unity plugin
 
-
-#include "UnityPluginInterface.h"
+#include <RenderingPlugin.h>
 
 #include <math.h>
 #include <stdio.h>
@@ -86,16 +85,19 @@ void checkOpenGLStatus( const char* situation )
 
 static float g_Time;
 
-extern "C" void EXPORT_API SetTimeFromUnity (float t) { g_Time = t; }
+void EXPORT_API SetTimeFromUnity (float t)
+{
+    g_Time = t;
+}
 
 static glm::mat4 modelMatrix_;
 static glm::mat4 viewMatrix_;
 static glm::mat4 projectionMatrix_;
 static glm::vec4 cameraPos_;
 
-extern "C" void EXPORT_API SetMatricesFromUnity( float* modelMatrix,
-                                                float* viewMatrix,
-                                                float* projectionMatrix )
+void EXPORT_API SetMatricesFromUnity( float* modelMatrix,
+                                        float* viewMatrix,
+                                        float* projectionMatrix )
 {
     modelMatrix_ = glm::make_mat4( modelMatrix );
     viewMatrix_ = glm::make_mat4( viewMatrix );
@@ -178,7 +180,8 @@ static GLuint CreateShader(GLenum type, const char* text)
 static void*	g_TexturePointer	= 0;
 static int		g_TexWidth			= 0;
 static int		g_TexHeight			= 0;
-extern "C" void SetTextureFromUnity(void* texturePtr, int w, int h)
+
+void EXPORT_API SetTextureFromUnity(void* texturePtr, int w, int h)
 {
     g_TexturePointer	= texturePtr;
     g_TexWidth			= w;
@@ -191,7 +194,7 @@ extern "C" void SetTextureFromUnity(void* texturePtr, int w, int h)
 
 static int g_DeviceType = -1;
 
-extern "C" void EXPORT_API UnitySetGraphicsDevice (void* device, int deviceType, int eventType)
+void EXPORT_API UnitySetGraphicsDevice (void* device, int deviceType, int eventType)
 {
     // Truncate log file.
     std::ofstream logFile( "rendering-plugin-log.txt" );
@@ -253,7 +256,7 @@ extern "C" void EXPORT_API UnitySetGraphicsDevice (void* device, int deviceType,
 struct MyVertex {
 	float x, y, z;
 	unsigned int color;
-    
+
     MyVertex() : x(0.0f), y(0.0f), z(0.0f), color(0) {}
     MyVertex( float x, float y, float z, unsigned int color ) :
         x(x),
@@ -281,7 +284,7 @@ void subdividePlane( const MyVertex* planeVertices,
                                     ( currentVertex.z + nextVertex.z ) / 2.0f,
                                     ( currentVertex.color + nextVertex.color ) / 2.0f
                                     );
-        
+
         middleVertices[i] = middleVertex;
     }
     // Compute plane centroid
@@ -297,25 +300,25 @@ void subdividePlane( const MyVertex* planeVertices,
     planeCentroid.y /= 4.0f;
     planeCentroid.z /= 4.0f;
     planeCentroid.color /= 4.0f;
-    
+
     // Subplane 0
     vertices.push_back( middleVertices[3] );
     vertices.push_back( planeVertices[0] );
     vertices.push_back( middleVertices[0] );
     vertices.push_back( planeCentroid );
-    
+
     // Subplane 1
     vertices.push_back( middleVertices[0] );
     vertices.push_back( planeVertices[1] );
     vertices.push_back( middleVertices[1] );
     vertices.push_back( planeCentroid );
-    
+
     // Subplane 2
     vertices.push_back( middleVertices[1] );
     vertices.push_back( planeVertices[2] );
     vertices.push_back( middleVertices[2] );
     vertices.push_back( planeCentroid );
-    
+
     // Subplane 3
     vertices.push_back( middleVertices[2] );
     vertices.push_back( planeVertices[3] );
@@ -325,7 +328,7 @@ void subdividePlane( const MyVertex* planeVertices,
 
 std::vector< MyVertex > vertices;
 
-extern "C" void EXPORT_API InitPlugin()
+void EXPORT_API InitPlugin()
 {
     // A plane.
     MyVertex srcVertices[] =
@@ -335,15 +338,15 @@ extern "C" void EXPORT_API InitPlugin()
         MyVertex(  0.5f, 0.0f, 0.5f, 0xFF00ff00 ),
         MyVertex( -0.5f, 0.0f, 0.5f, 0xFF00ff00 )
     };
-    
+
     // Copy original plane to vertices vector
     for( int i = 0; i < 4; i++ ){
         vertices.push_back( srcVertices[i] );
     }
-    
+
     // Subdivide plane (2).
     subdividePlane( &vertices[0], vertices );
-    
+
     // Subdivide plane (3).
     subdividePlane( &vertices[4], vertices );
     subdividePlane( &vertices[8], vertices );
@@ -352,12 +355,12 @@ extern "C" void EXPORT_API InitPlugin()
 }
 
 
-extern "C" void EXPORT_API UnityRenderEvent (int eventID)
+void EXPORT_API UnityRenderEvent (int eventID)
 {
 	// Unknown graphics device type? Do nothing.
 	if (g_DeviceType == -1)
 		return;
-    
+
 	// Actual functions defined below
 	SetDefaultGraphicsState ();
 	DoRendering( modelMatrix_, viewMatrix_, projectionMatrix_, vertices.data() );
@@ -449,7 +452,7 @@ static void DoRendering ( const glm::mat4& modelMatrix,
         // Compute the distance between the camera and the plane.
         // TODO: Compute real distance.
         const float distance = glm::length( cameraPos_ );
-        
+
         // Draw a version of the plane or another depending on the distance between
         // the camera and the plane.
         if( distance > 3.0f ){
