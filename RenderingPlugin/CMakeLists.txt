@@ -16,7 +16,7 @@ find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)
 # TODO: add find_package for SDL2 and use result variables.
 include_directories( ${OPENGL_INCLUDE_DIRS}  ${GLUT_INCLUDE_DIRS} "${CMAKE_SOURCE_DIR}/include" )
-set( LIBRARIES ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} -lSDL2 )
+set( LIBRARIES ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} )
 
 # Library generation
 set( LIBRARY_DST_DIR "${CMAKE_SOURCE_DIR}/../UnityProject/Assets/Plugins" )
@@ -32,4 +32,4 @@ target_link_libraries( ${PROJECT_NAME} ${LIBRARIES} )
 set( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR} )
 add_executable( "tests" "src/tests.cpp" )
 add_dependencies( "tests" ${PROJECT_NAME} )
-target_link_libraries( "tests" "${LIBRARIES};${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${PROJECT_NAME}.bundle" )
+target_link_libraries( "tests" "${LIBRARIES};${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${PROJECT_NAME}.bundle;-lSDL2" )
