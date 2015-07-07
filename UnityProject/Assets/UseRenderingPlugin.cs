@@ -61,10 +61,7 @@ public class UseRenderingPlugin : MonoBehaviour
 
 
 	IEnumerator Start () {
-		string errorLog = new string( getOpenGLErrorsLog() );
-		Debug.Log( errorLog );
 		InitPlugin ();
-		Debug.Log( new string( getOpenGLErrorsLog() ) );
 		CreateTextureAndPassToPlugin();
 		yield return StartCoroutine("CallPluginAtEndOfFrames");
 	}
