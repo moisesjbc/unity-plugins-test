@@ -339,7 +339,7 @@ void subdividePlane( std::vector< MyVertex >& vertices,
                                     ( currentVertex.x + nextVertex.x ) / 2.0f,
                                     ( currentVertex.y + nextVertex.y ) / 2.0f,
                                     ( currentVertex.z + nextVertex.z ) / 2.0f,
-                                    ( currentVertex.color + nextVertex.color ) / 2.0f
+                                    0xFFffffff
                                     );
 
         vertices.push_back( middleVertex );
@@ -388,10 +388,10 @@ void EXPORT_API InitPlugin()
     // A plane.
     MyVertex srcVertices[] =
     {
-        MyVertex( -0.5f, 0.0f, -0.5f, 0xFF00ff00 ),
+        MyVertex( -0.5f, 0.0f, -0.5f, 0xFFff0000 ),
         MyVertex( 0.5f, 0.0f, -0.5f, 0xFF00ff00 ),
-        MyVertex(  0.5f, 0.0f, 0.5f, 0xFF00ff00 ),
-        MyVertex( -0.5f, 0.0f, 0.5f, 0xFF00ff00 )
+        MyVertex(  0.5f, 0.0f, 0.5f, 0xFF0000ff ),
+        MyVertex( -0.5f, 0.0f, 0.5f, 0xFF0f0f0f )
     };
 
     // Copy original plane to vertices vector
@@ -449,7 +449,6 @@ static void SetDefaultGraphicsState ()
     glDepthFunc(GL_LEQUAL);
     glEnable(GL_DEPTH_TEST);
     glDepthMask(GL_FALSE);
-    glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 }
 
 
@@ -510,7 +509,7 @@ static void DoRendering ( const glm::mat4& modelMatrix,
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (const float*)verts);
         
         glEnableVertexAttribArray(1);
-        glVertexAttribIPointerEXT(1, 4, GL_UNSIGNED_BYTE, stride, (const float*)verts + 3);
+        glVertexAttribPointer(1, 4, GL_UNSIGNED_BYTE, GL_TRUE, stride, (const float*)verts + 3);
 
         // Compute the distance between the camera and the plane.
         // TODO: Compute real distance.
