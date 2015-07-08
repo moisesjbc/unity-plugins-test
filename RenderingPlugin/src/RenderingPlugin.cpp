@@ -292,38 +292,29 @@ static void DoRendering (const glm::mat4& worldMatrix,
 std::vector< MyVertex > vertices;
 std::vector< GLubyte > indices;
 
-void generatePlaneVertexIndices( unsigned int firstPlaneVertexIndex,
-                                std::vector<GLubyte>& indices )
+void subdividePlane( std::vector< MyVertex >& vertices,
+                    std::vector< GLubyte>& indices,
+                    unsigned int planeFirstVertexIndex )
 {
-    // First triangle.
-    indices.push_back( firstPlaneVertexIndex );
-    indices.push_back( firstPlaneVertexIndex+1 );
-    indices.push_back( firstPlaneVertexIndex+2 );
+    // Retrieve all the indices of the plane to be subdivided.
+    const GLubyte planeVertexIndices[4] =
+    {
+        indices[ planeFirstVertexIndex ],
+        indices[ planeFirstVertexIndex + 1 ],
+        indices[ planeFirstVertexIndex + 2 ],
+        indices[ planeFirstVertexIndex + 5 ]
+    };
     
-    // Second triangle.
-    indices.push_back( firstPlaneVertexIndex );
-    indices.push_back( firstPlaneVertexIndex+2 );
-    indices.push_back( firstPlaneVertexIndex+3 );
-}
-
-
-void subdividePlane( const MyVertex* planeVertices,
-                    std::vector<MyVertex>& vertices )
-{
-    MyVertex middleVertices[4];
-    for( int i = 0; i < 4; i++ ){
-        const MyVertex& currentVertex = planeVertices[i];
-        const MyVertex& nextVertex = planeVertices[(i+1)%4];
-        const MyVertex middleVertex(
-                                    ( currentVertex.x + nextVertex.x ) / 2.0f,
-                                    ( currentVertex.y + nextVertex.y ) / 2.0f,
-                                    ( currentVertex.z + nextVertex.z ) / 2.0f,
-                                    ( currentVertex.color + nextVertex.color ) / 2.0f
-                                    );
-
-        middleVertices[i] = middleVertex;
-    }
-    // Compute plane centroid
+    // Retrieve all the vertices of the plane being subdivided.
+    MyVertex planeVertices[4] =
+    {
+        vertices[planeVertexIndices[0]],
+        vertices[planeVertexIndices[1]],
+        vertices[planeVertexIndices[2]],
+        vertices[planeVertexIndices[3]]
+    };
+    
+    // Compute plane centroid and introduce it in the vertices vector.
     MyVertex planeCentroid;
     for( int i = 0; i < 4; i++ )
     {
@@ -336,35 +327,59 @@ void subdividePlane( const MyVertex* planeVertices,
     planeCentroid.y /= 4.0f;
     planeCentroid.z /= 4.0f;
     planeCentroid.color /= 4.0f;
-
-    // Subplane 0
-    vertices.push_back( planeVertices[0] );
-    vertices.push_back( middleVertices[0] );
     vertices.push_back( planeCentroid );
-    vertices.push_back( middleVertices[3] );
-    generatePlaneVertexIndices( vertices.size()-4, indices );
+    const GLubyte planeCentroidIndex = vertices.size() - 1;
+    
+    // Compute the middle vertices of the plane and push them into the vertices vector.
+    GLubyte midleVertexIndices[4];
+    for( int i = 0; i < 4; i++ ){
+        const MyVertex& currentVertex = planeVertices[i];
+        const MyVertex& nextVertex = planeVertices[(i+1)%4];
+        const MyVertex middleVertex(
+                                    ( currentVertex.x + nextVertex.x ) / 2.0f,
+                                    ( currentVertex.y + nextVertex.y ) / 2.0f,
+                                    ( currentVertex.z + nextVertex.z ) / 2.0f,
+                                    ( currentVertex.color + nextVertex.color ) / 2.0f
+                                    );
+
+        vertices.push_back( middleVertex );
+        midleVertexIndices[i] = vertices.size() - 1;
+    }
+    
+    // Now we have all the new vertices into vertices. Let's define the
+    // subplanes by feeding indices vector with new indices.
+    
+    // Subplane 0
+    indices.push_back( planeVertexIndices[0] );
+    indices.push_back( midleVertexIndices[0] );
+    indices.push_back( planeCentroidIndex );
+    indices.push_back( planeVertexIndices[0] );
+    indices.push_back( planeCentroidIndex );
+    indices.push_back( midleVertexIndices[3] );
 
     // Subplane 1
-    vertices.push_back( middleVertices[0] );
-    vertices.push_back( planeVertices[1] );
-    vertices.push_back( middleVertices[1] );
-    vertices.push_back( planeCentroid );
-    generatePlaneVertexIndices( vertices.size()-4, indices );
+    indices.push_back( midleVertexIndices[0] );
+    indices.push_back( planeVertexIndices[1] );
+    indices.push_back( midleVertexIndices[1] );
+    indices.push_back( midleVertexIndices[0] );
+    indices.push_back( midleVertexIndices[1] );
+    indices.push_back( planeCentroidIndex );
 
     // Subplane 2
-    vertices.push_back( planeCentroid );
-    vertices.push_back( middleVertices[1] );
-    vertices.push_back( planeVertices[2] );
-    vertices.push_back( middleVertices[2] );
-    
-    generatePlaneVertexIndices( vertices.size()-4, indices );
+    indices.push_back( planeCentroidIndex );
+    indices.push_back( midleVertexIndices[1] );
+    indices.push_back( planeVertexIndices[2] );
+    indices.push_back( planeCentroidIndex );
+    indices.push_back( planeVertexIndices[2] );
+    indices.push_back( midleVertexIndices[2] );
 
     // Subplane 3
-    vertices.push_back( middleVertices[3] );
-    vertices.push_back( planeCentroid );
-    vertices.push_back( middleVertices[2] );
-    vertices.push_back( planeVertices[3] );
-    generatePlaneVertexIndices( vertices.size()-4, indices );
+    indices.push_back( midleVertexIndices[3] );
+    indices.push_back( planeCentroidIndex );
+    indices.push_back( midleVertexIndices[2] );
+    indices.push_back( midleVertexIndices[3] );
+    indices.push_back( midleVertexIndices[2] );
+    indices.push_back( planeVertexIndices[3] );
 }
 
 
@@ -393,13 +408,13 @@ void EXPORT_API InitPlugin()
     indices.push_back( 3 );
 
     // Subdivide plane (2).
-    subdividePlane( &vertices[0], vertices );
+    subdividePlane( vertices, indices, 0 );
 
     // Subdivide plane (3).
-    subdividePlane( &vertices[4], vertices );
-    subdividePlane( &vertices[8], vertices );
-    subdividePlane( &vertices[12], vertices );
-    subdividePlane( &vertices[16], vertices );
+    subdividePlane( vertices, indices, 6 );
+    subdividePlane( vertices, indices, 12 );
+    subdividePlane( vertices, indices, 18 );
+    subdividePlane( vertices, indices, 24 );
 }
 
 
