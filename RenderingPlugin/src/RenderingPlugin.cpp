@@ -71,8 +71,6 @@ void checkOpenGLStatus( const char* situation )
         OPENGL_ERROR_CASE( errorMessage, GL_INVALID_OPERATION );
         OPENGL_ERROR_CASE( errorMessage, GL_INVALID_FRAMEBUFFER_OPERATION );
         OPENGL_ERROR_CASE( errorMessage, GL_OUT_OF_MEMORY );
-        OPENGL_ERROR_CASE( errorMessage, GL_STACK_UNDERFLOW );
-        OPENGL_ERROR_CASE( errorMessage, GL_STACK_OVERFLOW );
         default:
             errorMessage = "Unknown error";
         break;
