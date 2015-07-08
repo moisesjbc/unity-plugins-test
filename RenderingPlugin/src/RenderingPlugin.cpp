@@ -5,6 +5,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <vector>
+#define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <array>
@@ -18,8 +19,10 @@
     #error "OpenGL required!"
 #endif
 
-#if UNITY_WIN || UNITY_LINUX
+#define GL_GLEXT_PROTOTYPES
+#if UNITY_WIN || UNITY_LINUX	
     #include <GL/gl.h>
+	#include <GL/glext.h>
 #else
     #include <GLUT/GLUT.h>
     #include <OpenGL/OpenGL.h>
