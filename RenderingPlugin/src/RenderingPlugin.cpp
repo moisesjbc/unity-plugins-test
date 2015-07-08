@@ -338,10 +338,10 @@ void subdividePlane( const MyVertex* planeVertices,
     planeCentroid.color /= 4.0f;
 
     // Subplane 0
-    vertices.push_back( middleVertices[3] );
     vertices.push_back( planeVertices[0] );
     vertices.push_back( middleVertices[0] );
     vertices.push_back( planeCentroid );
+    vertices.push_back( middleVertices[3] );
     generatePlaneVertexIndices( vertices.size()-4, indices );
 
     // Subplane 1
@@ -352,17 +352,18 @@ void subdividePlane( const MyVertex* planeVertices,
     generatePlaneVertexIndices( vertices.size()-4, indices );
 
     // Subplane 2
+    vertices.push_back( planeCentroid );
     vertices.push_back( middleVertices[1] );
     vertices.push_back( planeVertices[2] );
     vertices.push_back( middleVertices[2] );
-    vertices.push_back( planeCentroid );
+    
     generatePlaneVertexIndices( vertices.size()-4, indices );
 
     // Subplane 3
-    vertices.push_back( middleVertices[2] );
-    vertices.push_back( planeVertices[3] );
     vertices.push_back( middleVertices[3] );
     vertices.push_back( planeCentroid );
+    vertices.push_back( middleVertices[2] );
+    vertices.push_back( planeVertices[3] );
     generatePlaneVertexIndices( vertices.size()-4, indices );
 }
 
