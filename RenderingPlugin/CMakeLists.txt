@@ -14,8 +14,9 @@ set( PROJECT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${
 # Find required libraries
 find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)
+find_package(GLM REQUIRED)
 # TODO: add find_package for SDL2 and use result variables.
-include_directories( ${OPENGL_INCLUDE_DIRS}  ${GLUT_INCLUDE_DIRS} "${CMAKE_SOURCE_DIR}/include" )
+include_directories( ${OPENGL_INCLUDE_DIRS} ${GLM_INCLUDE_DIRS} ${GLUT_INCLUDE_DIRS} "${CMAKE_SOURCE_DIR}/include" )
 set( LIBRARIES ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} )
 
 # Library generation
