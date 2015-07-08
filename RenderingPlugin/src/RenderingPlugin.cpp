@@ -289,6 +289,24 @@ static void DoRendering (const glm::mat4& worldMatrix,
                          const glm::mat4& projectionMatrix,
                          const MyVertex* verts);
 
+std::vector< MyVertex > vertices;
+std::vector< GLubyte > indices;
+
+void generatePlaneVertexIndices( unsigned int firstPlaneVertexIndex,
+                                std::vector<GLubyte>& indices )
+{
+    // First triangle.
+    indices.push_back( firstPlaneVertexIndex );
+    indices.push_back( firstPlaneVertexIndex+1 );
+    indices.push_back( firstPlaneVertexIndex+2 );
+    
+    // Second triangle.
+    indices.push_back( firstPlaneVertexIndex );
+    indices.push_back( firstPlaneVertexIndex+2 );
+    indices.push_back( firstPlaneVertexIndex+3 );
+}
+
+
 void subdividePlane( const MyVertex* planeVertices,
                     std::vector<MyVertex>& vertices )
 {
@@ -324,27 +342,30 @@ void subdividePlane( const MyVertex* planeVertices,
     vertices.push_back( planeVertices[0] );
     vertices.push_back( middleVertices[0] );
     vertices.push_back( planeCentroid );
+    generatePlaneVertexIndices( vertices.size()-4, indices );
 
     // Subplane 1
     vertices.push_back( middleVertices[0] );
     vertices.push_back( planeVertices[1] );
     vertices.push_back( middleVertices[1] );
     vertices.push_back( planeCentroid );
+    generatePlaneVertexIndices( vertices.size()-4, indices );
 
     // Subplane 2
     vertices.push_back( middleVertices[1] );
     vertices.push_back( planeVertices[2] );
     vertices.push_back( middleVertices[2] );
     vertices.push_back( planeCentroid );
+    generatePlaneVertexIndices( vertices.size()-4, indices );
 
     // Subplane 3
     vertices.push_back( middleVertices[2] );
     vertices.push_back( planeVertices[3] );
     vertices.push_back( middleVertices[3] );
     vertices.push_back( planeCentroid );
+    generatePlaneVertexIndices( vertices.size()-4, indices );
 }
 
-std::vector< MyVertex > vertices;
 
 void EXPORT_API InitPlugin()
 {
@@ -361,6 +382,14 @@ void EXPORT_API InitPlugin()
     for( int i = 0; i < 4; i++ ){
         vertices.push_back( srcVertices[i] );
     }
+    // First triangle.
+    indices.push_back( 0 );
+    indices.push_back( 1 );
+    indices.push_back( 2 );
+    // Second triangle.
+    indices.push_back( 0 );
+    indices.push_back( 2 );
+    indices.push_back( 3 );
 
     // Subdivide plane (2).
     subdividePlane( &vertices[0], vertices );
@@ -473,12 +502,13 @@ static void DoRendering ( const glm::mat4& modelMatrix,
 
         // Draw a version of the plane or another depending on the distance between
         // the camera and the plane.
+        const unsigned int N_INDICES_PER_PLANE = 6;
         if( distance > 3.0f ){
-            glDrawArrays (GL_QUADS, 0, 4);
+            glDrawElements( GL_TRIANGLES, N_INDICES_PER_PLANE, GL_UNSIGNED_BYTE, indices.data() );
         }else if( distance > 2.0f ){
-            glDrawArrays( GL_QUADS, 4, 16 );
+            glDrawElements( GL_TRIANGLES, 4 * N_INDICES_PER_PLANE, GL_UNSIGNED_BYTE, indices.data() + N_INDICES_PER_PLANE );
         }else{
-            glDrawArrays( GL_QUADS, 20, 64 );
+            glDrawElements( GL_TRIANGLES, 16 * N_INDICES_PER_PLANE, GL_UNSIGNED_BYTE, indices.data() + 5 *N_INDICES_PER_PLANE );
         }
 
         // update native texture from code
