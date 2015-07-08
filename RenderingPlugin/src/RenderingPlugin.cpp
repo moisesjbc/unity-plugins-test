@@ -23,8 +23,13 @@
 #if UNITY_WIN || UNITY_LINUX	
     #include <GLES2/gl2.h>
 	#include <GLES2/gl2ext.h>
+#elif UNITY_IPHONE
+    #include <OpenGLES/ES2/gl.h>
+#elif UNITY_ANDROID
+    #include <GLES2/gl2.h>
 #else
-	// TODO: Test on Windows.
+	// TODO: can't include GLES2 on Mac?
+    // (http://forums.macrumors.com/threads/xcode-opengl-es2-desktop-project.1109285/)
     #include <GLUT/GLUT.h>
     #include <OpenGL/OpenGL.h>
 #endif
