@@ -21,9 +21,10 @@
 
 #define GL_GLEXT_PROTOTYPES
 #if UNITY_WIN || UNITY_LINUX	
-    #include <GL/gl.h>
-	#include <GL/glext.h>
+    #include <GLES2/gl2.h>
+	#include <GLES2/gl2ext.h>
 #else
+	// TODO: Test on Windows.
     #include <GLUT/GLUT.h>
     #include <OpenGL/OpenGL.h>
 #endif
