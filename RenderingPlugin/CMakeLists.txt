@@ -22,7 +22,7 @@ set( LIBRARIES ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} )
 # Library generation
 set( LIBRARY_DST_DIR "${CMAKE_SOURCE_DIR}/../UnityProject/Assets/Plugins" )
 set( CMAKE_LIBRARY_OUTPUT_DIRECTORY "${LIBRARY_DST_DIR}" )
-add_library( ${PROJECT_NAME} SHARED "src/RenderingPlugin.cpp" "include/RenderingPlugin.h" )
+add_library( ${PROJECT_NAME} SHARED "src/RenderingPlugin.cpp" "src/lod_plane.cpp" "include/RenderingPlugin.h" "include/lod_plane.hpp" )
 set_target_properties( ${PROJECT_NAME} PROPERTIES
 	PREFIX ""
 	SUFFIX ".bundle"
