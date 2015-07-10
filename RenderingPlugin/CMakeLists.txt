@@ -11,6 +11,18 @@ set( PROJECT_VERSION_MINOR 1 )
 set( PROJECT_VERSION_PATCH 0 )
 set( PROJECT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH} )
 
+# Source files
+set( SOURCE_FILES
+    "src/RenderingPlugin.cpp"
+    "src/lod_plane.cpp"
+)
+
+# Header files
+set( HEADER_FILES
+    "include/RenderingPlugin.h"
+    "include/lod_plane.hpp"
+)
+
 # Find required libraries
 find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)
@@ -22,7 +34,7 @@ set( LIBRARIES ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} )
 # Library generation
 set( LIBRARY_DST_DIR "${CMAKE_SOURCE_DIR}/../UnityProject/Assets/Plugins" )
 set( CMAKE_LIBRARY_OUTPUT_DIRECTORY "${LIBRARY_DST_DIR}" )
-add_library( ${PROJECT_NAME} SHARED "src/RenderingPlugin.cpp" "src/lod_plane.cpp" "include/RenderingPlugin.h" "include/lod_plane.hpp" )
+add_library( ${PROJECT_NAME} SHARED ${SOURCE_FILES} ${HEADER_FILES} )
 set_target_properties( ${PROJECT_NAME} PROPERTIES
 	PREFIX ""
 	SUFFIX ".bundle"
