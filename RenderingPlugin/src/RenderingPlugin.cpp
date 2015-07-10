@@ -110,7 +110,6 @@ varying " vec4 ocolor;\n"									\
 "}\n"															\
 
 static const char* kGlesVProgTextGLES2		= VPROG_SRC("\n", "attribute", "varying");
-static const char* kGlesVProgTextGLES3		= VPROG_SRC("#version 300 es\n", "in", "out");
 
 #undef VPROG_SRC
 
@@ -125,7 +124,6 @@ varying " vec4 ocolor;\n"					\
 "}\n"											\
 
 static const char* kGlesFShaderTextGLES2	= FSHADER_SRC("\n", "varying", "\n", "gl_FragColor");
-static const char* kGlesFShaderTextGLES3	= FSHADER_SRC("#version 300 es\n", "in", "out lowp vec4 fragColor;\n", "fragColor");
 
 #undef FSHADER_SRC
 
