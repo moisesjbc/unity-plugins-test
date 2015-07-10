@@ -11,6 +11,7 @@
 #include <array>
 #include <string>
 #include <fstream>
+#include <lod_plane.hpp>
 
 // --------------------------------------------------------------------------
 // Include headers for the graphics APIs we support
@@ -270,19 +271,6 @@ void EXPORT_API UnitySetGraphicsDevice (void* device, int deviceType, int eventT
 // be the integer passed to IssuePluginEvent. In this example, we just ignore
 // that value.
 
-
-struct MyVertex {
-	float x, y, z;
-	unsigned int color;
-
-    MyVertex() : x(0.0f), y(0.0f), z(0.0f), color(0) {}
-    MyVertex( float x, float y, float z, unsigned int color ) :
-        x(x),
-        y(y),
-        z(z),
-        color(color)
-    {}
-};
 static void SetDefaultGraphicsState ();
 static void DoRendering (const glm::mat4& worldMatrix,
                          const glm::mat4& viewMatrix,
