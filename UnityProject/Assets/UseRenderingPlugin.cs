@@ -49,6 +49,14 @@ public class UseRenderingPlugin : MonoBehaviour
 	[DllImport ("RenderingPlugin")]
 	#endif
 	private static extern void InitPlugin ();
+	
+
+	#if UNITY_IPHONE && !UNITY_EDITOR
+	[DllImport ("__Internal")]
+	#else
+	[DllImport ("RenderingPlugin")]
+	#endif
+	private static extern void DestroyPlugin ();
 
 
 	#if UNITY_IPHONE && !UNITY_EDITOR
@@ -65,6 +73,13 @@ public class UseRenderingPlugin : MonoBehaviour
 		CreateTextureAndPassToPlugin();
 		yield return StartCoroutine("CallPluginAtEndOfFrames");
 	}
+
+
+	void OnDestroy() {
+		DestroyPlugin ();
+	}
+
+
 	private void CreateTextureAndPassToPlugin()
 	{
 		// Create a texture

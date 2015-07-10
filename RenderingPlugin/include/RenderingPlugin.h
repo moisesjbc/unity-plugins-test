@@ -74,6 +74,7 @@ enum GfxDeviceEventType {
 extern "C"
 {
     void EXPORT_API InitPlugin();
+    void EXPORT_API DestroyPlugin();
     void EXPORT_API SetTimeFromUnity (float t);
     void EXPORT_API SetMatricesFromUnity( float* modelMatrix,
                                             float* viewMatrix,
