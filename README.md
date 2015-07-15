@@ -66,3 +66,5 @@ Reference: [Recompiled plugins not refreshing in Unity - Unity Answers](http://a
 ### Editing the plugin’s inner code
 
 When editing variables or functions **which aren’t called directly by Unity**, simply make the desired change and recompile the plugin.
+
+**NOTE: ** if your changes affect the CMakeLists.txt specification (ie. removing source files, adding libraries, etc), please edit CMakeLists.txt so the project can be built from zero with the new changes :)
