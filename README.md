@@ -68,3 +68,49 @@ Reference: [Recompiled plugins not refreshing in Unity - Unity Answers](http://a
 When editing variables or functions **which aren’t called directly by Unity**, simply make the desired change and recompile the plugin.
 
 **NOTE: ** if your changes affect the CMakeLists.txt specification (ie. removing source files, adding libraries, etc), please edit CMakeLists.txt so the project can be built from zero with the new changes :)
+
+### Altering the communication Unity - Plugin
+
+Let’s suppose that you have added a C++ function with the following signature
+
+```
+int add( int a, int b );
+```
+
+to the plugin, and you want to call that function from Unity. For that, make the following:
+
+1. Make sure that your function’s declaration is inside an extern “C” block and that it includes the EXPORT_API macro.
+
+    ```C++
+    #include <RenderingPlugin.h>
+
+    extern “C” {
+        int EXPORT_API add( int a, int b );
+    }
+    ```
+
+2. From Unity, open the script file you want to call the function from (ie. UnityProject/UseRenderingPlugin.cs). Then, “import” your function.
+
+    ```C#
+    public class UseRenderingPlugin : MonoBehaviour
+    {
+        #if UNITY_IPHONE && !UNITY_EDITOR
+	    [DllImport ("__Internal")]
+        #else
+	    [DllImport ("RenderingPlugin")]
+        #endif
+        …
+        private static extern int add( int a, int b );
+        …
+    }
+    ```
+
+3. Now you can use your awesome plugin function from Unity!
+
+    ```C#
+    IEnumerator Start () {
+        …
+        Debug.Log( "3 + 5 = " + add ( 3, 5 )  );
+        …
+    }
+    ```
