@@ -51,6 +51,8 @@ The **main files** of the project’s directory hierarchy are presented below:
     * **RenderingPlugin.c:** Definitions of exported functions to be called by Unity.
     * **\*.cpp:** Definitions of inner classes used by the plugin.
 * **UnityProject/:** Unity project using the rendering plugin.
+  * **Assets/:** Project assets
+    * **Scripts/:** Project scripts. Some of these scripts are the ones which communicates with the rendering plugin.
 
 ### Note for Mac users
 
