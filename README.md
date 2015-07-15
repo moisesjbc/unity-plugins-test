@@ -37,3 +37,36 @@ This is a test about creating a rendering plugin for [Unity](http://unity3d.com)
 5. Run Unity and open the project <project_dir>/UnityProject
 
 6. Press play and enjoy this masterpiece!
+
+## Working on the project
+
+### Directory hierarchy
+
+The **main files** of the project’s directory hierarchy are presented below:
+
+<local_repository>
+
+* **RenderingPlugin/: ** Code for Plugin’s rendering plugin.
+  * **CMakeLists.txt: ** Specification file for building the plugin using CMake
+  * **include/: ** Headers
+    * **RenderingPlugin.h: ** Declarations of exported functions to be called by Unity.
+    * ** *.hpp: ** Declarations of inner classes used by the plugin.
+  * **src/: ** Source files
+    * **RenderingPlugin.c: ** Definitions of exported functions to be called by Unity.
+    * ** *.cpp: ** Definitions of inner classes used by the plugin.
+* **UnityProject/: ** Unity project using the rendering plugin.
+
+### Note for Mac users
+
+When working on Mac, I noticed that **recompiling the rendering plugin wouldn’t be enough for Unity to reload it**. If you have opened Unity and recompiled the rendering plugin. **The (cumbersome) solution is to reimport all assets from Unity**:
+
+1. On Unity, go to the Project panel (on the bottom-left) and right-click on Assets.
+2. Select “Reimport all”.
+3. A “are you sure” dialog will popup. Click on “Reimport” button.
+4. Unity will close and open again, with the updated version of the plugin loaded.
+
+Reference: [Recompiled plugins not refreshing in Unity - Unity Answers](http://answers.unity3d.com/questions/55234/recompiled-plugins-not-refreshing-in-unity.html)
+
+### Editing the plugin’s inner code
+
+When editing variables or functions **which aren’t called directly by Unity**, simply make the desired change and recompile the plugin.
