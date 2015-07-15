@@ -1,5 +1,7 @@
 # unity-plugins-test
 
+This is a test about creating a rendering plugin for [Unity](http://unity3d.com). When used together, we get a scene with some models rendered by Unity and some others rendered by the plugin itself.
+
 ## Initializing the project
 
 1. Install dependencies.
