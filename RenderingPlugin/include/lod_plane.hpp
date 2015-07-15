@@ -20,8 +20,7 @@
 #else
     // TODO: can't include GLES2 on Mac?
     // (http://forums.macrumors.com/threads/xcode-opengl-es2-desktop-project.1109285/)
-    #include <GLUT/GLUT.h>
-    #include <OpenGL/OpenGL.h>
+    #include <OpenGL/gl3.h>
 #endif
 
 #include <vector>
