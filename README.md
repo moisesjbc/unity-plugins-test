@@ -22,21 +22,17 @@ This is a test about creating a rendering plugin for [Unity](http://unity3d.com)
  git clone git@github.com:moisesjbc/unity-plugins-test.git
  ```
 
-3. Enter into the plugin’s directory
+3. Run cmake-gui on the directory &lt;local_repository&gt;/RenderingPlugin.
 
- ```
- cd <local_repository>/RenderingPlugin
- ```
+4. Generate a project for Visual Studio, Xcode, or your preferred build tool.
 
-4. Build the plugin using CMake and Make. This should generate a library in the folder &lt;project_dir&gt;/UnityProject/Assets/Plugins
+5. Close cmake-gui and open the project generated in the previous step.
 
- ```
- cmake -DCMAKE_MODULE_PATH=/usr/local/lib/cmake . && make
- ```
+6. Build the plugin. This should generate a library in the folder &lt;project_dir&gt;/UnityProject/Assets/Plugins
 
-5. Run Unity and open the project <project_dir>/UnityProject
+7. Now run Unity and open the project <project_dir>/UnityProject
 
-6. Press play and enjoy this masterpiece!
+8. Press play and enjoy this masterpiece!
 
 ## Working on the project
 
