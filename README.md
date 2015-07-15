@@ -16,21 +16,21 @@ This is a test about creating a rendering plugin for [Unity](http://unity3d.com)
 
 1. Install all the dependencies listed in previous section.
 
-2. Clone this repository. This will create a local directory which we’ll refer to as &lt;local_repository&gt; in the following steps.
+2. Clone this repository. This will create a local directory which we’ll refer to as *LOCAL_REPO_DIR* in the following steps.
 
  ```
  git clone git@github.com:moisesjbc/unity-plugins-test.git
  ```
 
-3. Run cmake-gui on the directory &lt;local_repository&gt;/RenderingPlugin.
+3. Run cmake-gui on the directory *LOCAL_REPO_DIR*/RenderingPlugin.
 
 4. Generate a project for Visual Studio, Xcode, or your preferred build tool.
 
 5. Close cmake-gui and open the project generated in the previous step.
 
-6. Build the plugin. This should generate a library in the folder &lt;project_dir&gt;/UnityProject/Assets/Plugins
+6. Build the plugin. This should generate a library in the folder *LOCAL_REPO_DIR*/UnityProject/Assets/Plugins
 
-7. Now run Unity and open the project <project_dir>/UnityProject
+7. Now run Unity and open the project *LOCAL_REPO_DIR*/UnityProject
 
 8. Press play and enjoy this masterpiece!
 
@@ -40,17 +40,17 @@ This is a test about creating a rendering plugin for [Unity](http://unity3d.com)
 
 The **main files** of the project’s directory hierarchy are presented below:
 
-<local_repository>
+*LOCAL_REPO_DIR*
 
-* **RenderingPlugin/: ** Code for Plugin’s rendering plugin.
-  * **CMakeLists.txt: ** Specification file for building the plugin using CMake
-  * **include/: ** Headers
-    * **RenderingPlugin.h: ** Declarations of exported functions to be called by Unity.
-    * ** *.hpp: ** Declarations of inner classes used by the plugin.
-  * **src/: ** Source files
-    * **RenderingPlugin.c: ** Definitions of exported functions to be called by Unity.
-    * ** *.cpp: ** Definitions of inner classes used by the plugin.
-* **UnityProject/: ** Unity project using the rendering plugin.
+* **RenderingPlugin/:** Code for Plugin’s rendering plugin.
+  * **CMakeLists.txt:** Specification file for building the plugin using CMake
+  * **include/:** Headers
+    * **RenderingPlugin.h:** Declarations of exported functions to be called by Unity.
+    * **\*.hpp:** Declarations of inner classes used by the plugin.
+  * **src/:** Source files
+    * **RenderingPlugin.c:** Definitions of exported functions to be called by Unity.
+    * **\*.cpp:** Definitions of inner classes used by the plugin.
+* **UnityProject/:** Unity project using the rendering plugin.
 
 ### Note for Mac users
 
