@@ -73,8 +73,8 @@ When editing variables or functions **which aren’t called directly by Unity**,
 
 Let’s suppose that you have added a C++ function with the following signature
 
-```
-int add( int a, int b );
+```C++
+    int add( int a, int b );
 ```
 
 to the plugin, and you want to call that function from Unity. For that, make the following:
