@@ -12,8 +12,28 @@ This is a test about creating a rendering plugin for [Unity](http://unity3d.com)
 * [SDL2 (>= 2.0)](https://www.libsdl.org)
 * [SDL2_Image (>= 2.0)](https://www.libsdl.org/projects/SDL_image/)
 
-## Initializing the project
+## Building and running the project
 
-1. Install dependencies.
-2. Go to directory "RenderingPlugin" and build the plugin using CMake.
-3. Open UnityProject/ in Unity and enjoy!
+1. Install all the dependencies listed in previous section.
+
+2. Clone this repository. This will create a local directory which we’ll refer to as <local_repository> in the following steps.
+
+ ```
+ git clone git@github.com:moisesjbc/unity-plugins-test.git
+ ```
+
+3. Enter into the plugin’s directory
+
+ ```
+ cd <local_repository>/RenderingPlugin
+ ```
+
+4. Build the plugin using CMake and Make. This should generate a library in the folder <project_dir>/UnityProject/Assets/Plugins
+
+ ```
+ cmake -DCMAKE_MODULE_PATH=/usr/local/lib/cmake . && make
+ ```
+
+5. Run Unity and open the project <project_dir>/UnityProject
+
+6. Press play and enjoy this masterpiece!
