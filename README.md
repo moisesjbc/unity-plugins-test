@@ -16,7 +16,7 @@ This is a test about creating a rendering plugin for [Unity](http://unity3d.com)
 
 1. Install all the dependencies listed in previous section.
 
-2. Clone this repository. This will create a local directory which we’ll refer to as <local_repository> in the following steps.
+2. Clone this repository. This will create a local directory which we’ll refer to as &lt;local_repository&gt; in the following steps.
 
  ```
  git clone git@github.com:moisesjbc/unity-plugins-test.git
@@ -28,7 +28,7 @@ This is a test about creating a rendering plugin for [Unity](http://unity3d.com)
  cd <local_repository>/RenderingPlugin
  ```
 
-4. Build the plugin using CMake and Make. This should generate a library in the folder <project_dir>/UnityProject/Assets/Plugins
+4. Build the plugin using CMake and Make. This should generate a library in the folder &lt;project_dir&gt;/UnityProject/Assets/Plugins
 
  ```
  cmake -DCMAKE_MODULE_PATH=/usr/local/lib/cmake . && make
