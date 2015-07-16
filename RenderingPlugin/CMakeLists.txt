@@ -26,11 +26,10 @@ set( HEADER_FILES
 # Find required libraries
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 find_package(OpenGL REQUIRED)
-find_package(GLUT REQUIRED)
 find_package(GLM REQUIRED)
 # TODO: add find_package for SDL2 and use result variables.
-include_directories( ${OPENGL_INCLUDE_DIRS} ${GLM_INCLUDE_DIRS} ${GLUT_INCLUDE_DIRS} "${CMAKE_SOURCE_DIR}/include" )
-set( LIBRARIES ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} )
+include_directories( ${OPENGL_INCLUDE_DIRS} ${GLM_INCLUDE_DIR} "${CMAKE_SOURCE_DIR}/include" )
+set( LIBRARIES ${OPENGL_LIBRARIES} )
 
 # Library generation
 set( LIBRARY_DST_DIR "${CMAKE_SOURCE_DIR}/../UnityProject/Assets/Plugins" )
