@@ -27,9 +27,11 @@ set( HEADER_FILES
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 find_package(OpenGL REQUIRED)
 find_package(GLM REQUIRED)
+find_package(GLEW REQUIRED)
 # TODO: add find_package for SDL2 and use result variables.
-include_directories( ${OPENGL_INCLUDE_DIRS} ${GLM_INCLUDE_DIR} "${CMAKE_SOURCE_DIR}/include" )
-set( LIBRARIES ${OPENGL_LIBRARIES} )
+include_directories( ${OPENGL_INCLUDE_DIRS} ${GLM_INCLUDE_DIR} ${GLEW_INCLUDE_DIRS} "${CMAKE_SOURCE_DIR}/include" )
+message( STATUS ${GLEW_LIBRARIES} )
+set( LIBRARIES ${GLEW_LIBRARIES} ${OPENGL_LIBRARIES} )
 
 # Library generation
 set( LIBRARY_DST_DIR "${CMAKE_SOURCE_DIR}/../UnityProject/Assets/Plugins" )

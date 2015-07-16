@@ -2,7 +2,7 @@
 #define RENDERING_PLUGIN_H
 
 // Which platform we are on?
-#if _MSC_VER
+#if _MSC_VER || __MINGW32__
 #define UNITY_WIN 1
 #elif defined(__APPLE__)
 	#if defined(__arm__)
