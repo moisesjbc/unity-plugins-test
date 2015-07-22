@@ -33,12 +33,14 @@ struct MyVertex {
     unsigned int color;
 	float uvX, uvY;
     
-    MyVertex() : x(0.0f), y(0.0f), z(0.0f), color(0) {}
-    MyVertex( float x, float y, float z, unsigned int color ) :
+    MyVertex() : x(0.0f), y(0.0f), z(0.0f), color(0), uvX(0.0f), uvY(0.0f) {}
+    MyVertex( float x, float y, float z, unsigned int color, float uvX, float uvY ) :
     x(x),
     y(y),
     z(z),
-    color(color)
+    color(color),
+	uvX(uvX),
+	uvY(uvY)
     {}
 };
 

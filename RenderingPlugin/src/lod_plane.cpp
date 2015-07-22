@@ -7,10 +7,10 @@ LODPlane::LODPlane()
     // A plane.
     MyVertex srcVertices[] =
     {
-        MyVertex( -0.5f, 0.0f, -0.5f, 0xFFff0000 ),
-        MyVertex( 0.5f, 0.0f, -0.5f, 0xFF00ff00 ),
-        MyVertex(  0.5f, 0.0f, 0.5f, 0xFF0000ff ),
-        MyVertex( -0.5f, 0.0f, 0.5f, 0xFF0f0f0f )
+        MyVertex( -0.5f, 0.0f, -0.5f, 0xFFff0000, 0.0f, 1.0f ),
+        MyVertex( 0.5f, 0.0f, -0.5f, 0xFF00ff00, 1.0f, 1.0f ),
+        MyVertex(  0.5f, 0.0f, 0.5f, 0xFF0000ff, 1.0f, 0.0f ),
+        MyVertex( -0.5f, 0.0f, 0.5f, 0xFF0f0f0f, 0.0f, 0.0f )
     };
     
     // Copy original plane to vertices vector
@@ -93,11 +93,15 @@ void LODPlane::subdividePlane( std::vector< MyVertex >& vertices,
         planeCentroid.y += planeVertices[i].y;
         planeCentroid.z += planeVertices[i].z;
         planeCentroid.color += planeVertices[i].color;
+		planeCentroid.uvX += planeVertices[i].uvX;
+		planeCentroid.uvY += planeVertices[i].uvY;
     }
     planeCentroid.x /= 4.0f;
     planeCentroid.y /= 4.0f;
     planeCentroid.z /= 4.0f;
     planeCentroid.color /= 4.0f;
+	planeCentroid.uvX /= 4.0f;
+	planeCentroid.uvY / 4.0f;
     vertices.push_back( planeCentroid );
     const GLubyte planeCentroidIndex = vertices.size() - 1;
     
@@ -110,7 +114,9 @@ void LODPlane::subdividePlane( std::vector< MyVertex >& vertices,
                                     ( currentVertex.x + nextVertex.x ) / 2.0f,
                                     ( currentVertex.y + nextVertex.y ) / 2.0f,
                                     ( currentVertex.z + nextVertex.z ) / 2.0f,
-                                    0xFFffffff
+                                    0xFFffffff,
+									(currentVertex.uvX + nextVertex.uvX) / 2.0f,
+									(currentVertex.uvY + nextVertex.uvY) / 2.0f
                                     );
         
         vertices.push_back( middleVertex );
