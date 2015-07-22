@@ -2,15 +2,16 @@
 
 This is a test about creating a rendering plugin for [Unity](http://unity3d.com). When used together, we get a scene with some models rendered by Unity and some others rendered by the plugin itself.
 
+**NOTE**: At this point of the development, this project is being built **under Windows only**.
+
 ## Dependencies
 
 * [Unity (>= 5)](http://unity3d.com)
+* [Git for windows](https://msysgit.github.io/)
 * [CMake (>= 2.8)](http://www.cmake.org)
-* [OpenGL ES 2.0](https://www.khronos.org/opengles/2_X/)
-* [GLUT](https://www.opengl.org/resources/libraries/glut/)
-* [GLM (>= 0.9.6.3)](http://glm.g-truc.net/0.9.6/index.html)
-* [SDL2 (>= 2.0)](https://www.libsdl.org)
-* [SDL2_Image (>= 2.0)](https://www.libsdl.org/projects/SDL_image/)
+* [Visual Studio 12](https://www.visualstudio.com/)
+* [GLM (>= 0.9.6.3](glm.g-truc.net/)
+* [GLEW (>= 1.12.0](http://glew.sourceforge.net/)
 * [Easylogging++](https://github.com/easylogging/easyloggingpp)
 
 ## Building and running the project
@@ -29,7 +30,7 @@ This is a test about creating a rendering plugin for [Unity](http://unity3d.com)
 
 5. Close cmake-gui and open the project generated in the previous step.
 
-6. Build the plugin. This should generate a library in the folder *LOCAL_REPO_DIR*/UnityProject/Assets/Plugins
+6. Build the plugin and copy it to *LOCAL_REPO_DIR*/UnityProject/Assets/Plugins
 
 7. Now run Unity and open the project *LOCAL_REPO_DIR*/UnityProject
 
@@ -55,16 +56,9 @@ The **main files** of the project’s directory hierarchy are presented below:
   * **Assets/:** Project assets
     * **Scripts/:** Project scripts. Some of these scripts are the ones which communicates with the rendering plugin.
 
-### Note for Mac users
+### IMPORTANT NOTE FOR DEVELOPERS
 
-When working on Mac, I noticed that **recompiling the rendering plugin wouldn’t be enough for Unity to reload it**. If you have opened Unity and recompiled the rendering plugin. **The (cumbersome) solution is to reimport all assets from Unity**:
-
-1. On Unity, go to the Project panel (on the bottom-left) and right-click on Assets.
-2. Select “Reimport all”.
-3. A “are you sure” dialog will popup. Click on “Reimport” button.
-4. Unity will close and open again, with the updated version of the plugin loaded.
-
-Reference: [Recompiled plugins not refreshing in Unity - Unity Answers](http://answers.unity3d.com/questions/55234/recompiled-plugins-not-refreshing-in-unity.html)
+When recompiling the plugin, this must be moved to the *LOCAL_REPO_DIR*/UnityProject/Assets/Plugins directory in order for Unity to use it. **But there is a problem**, according to [this link](http://answers.unity3d.com/questions/55234/recompiled-plugins-not-refreshing-in-unity.html), **"On Windows, the DLL file would be locked for writing, stopping you from overwiting it"**. This means that, in order to update the plugin, the Unity project must be closed while we overwrite the old version of the plugin with the new one. Once we reopen Unity project, it should load the new version of the plugin.
 
 ### Editing the plugin’s inner code
 
