@@ -32,9 +32,15 @@ This is a test about creating a rendering plugin for [Unity](http://unity3d.com)
 
 6. Build the plugin and copy it to *LOCAL_REPO_DIR*/UnityProject/Assets/Plugins
 
-7. Now run Unity and open the project *LOCAL_REPO_DIR*/UnityProject
+7. Now run Unity **forcing it to use OpenGL**
 
-8. Press play and enjoy this masterpiece!
+ ```
+ "C:\Program Files\Unity\Editor\Unity.exe" -force-opengl
+ ```
+
+8. From Unity, open the project *LOCAL_REPO_DIR*/UnityProject
+
+9. Press play and enjoy this masterpiece!
 
 ## Working on the project
 
