@@ -259,7 +259,7 @@ LODPlane* lodPlane;
 
 void EXPORT_API InitPlugin()
 {
-    lodPlane = new LODPlane;
+    lodPlane = new LODPlane();
 }
 
 void EXPORT_API DestroyPlugin()

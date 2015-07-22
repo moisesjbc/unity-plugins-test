@@ -2,7 +2,8 @@
 
 INITIALIZE_EASYLOGGINGPP
 
-LODPlane::LODPlane()
+LODPlane::LODPlane( GLint textureID ) :
+	textureID_(textureID )
 {
     // A plane.
     MyVertex srcVertices[] =
