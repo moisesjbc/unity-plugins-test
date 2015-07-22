@@ -43,7 +43,7 @@ void LODPlane::render( float distanceToObserver )
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     
     // Vertex layout.
-    const int stride = 3*sizeof(float) + sizeof(unsigned int);
+    const int stride = 3*sizeof(float) + sizeof(unsigned int) + 2 * sizeof( float );
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (const float*)vertices_.data());
     

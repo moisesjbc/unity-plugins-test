@@ -31,6 +31,7 @@
 struct MyVertex {
     float x, y, z;
     unsigned int color;
+	float uvX, uvY;
     
     MyVertex() : x(0.0f), y(0.0f), z(0.0f), color(0) {}
     MyVertex( float x, float y, float z, unsigned int color ) :
