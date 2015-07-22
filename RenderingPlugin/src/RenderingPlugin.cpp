@@ -109,7 +109,7 @@ varying " vec3 ouv;\n"									\
 "	ouv = uv;\n"											\
 "}\n"															\
 
-static const char* kGlesVProgTextGLES2		= VPROG_SRC("\n", "attribute", "varying");
+static const char* kGlesVProgTextGLES2 = VPROG_SRC("\n", "attribute", "varying");
 
 #undef VPROG_SRC
 
@@ -119,9 +119,11 @@ outDecl											\
 varying " vec4 ocolor;\n"					\
 varying " vec3 ouv;\n"									\
 "\n"											\
+"uniform sampler2D textureSampler;\n"			\
+"\n"											\
 "void main()\n"									\
 "{\n"											\
-"	" outVar " = ocolor;\n"						\
+"	" outVar " = texture( textureSampler, ouv );\n"\
 "}\n"											\
 
 static const char* kGlesFShaderTextGLES2	= FSHADER_SRC("\n", "varying", "\n", "gl_FragColor");
@@ -353,9 +355,6 @@ static void DoRendering ( const glm::mat4& modelMatrix,
         // TODO: Compute real distance.
         const float distance = glm::length( cameraPos_ );
     
-        // Render the plane
-        lodPlane->render( distance );
-
         // update native texture from code
         if (g_TexturePointer)
         {
@@ -366,5 +365,9 @@ static void DoRendering ( const glm::mat4& modelMatrix,
             FillTextureFromCode(g_TexWidth, g_TexHeight, g_TexHeight*4, data);
             glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, g_TexWidth, g_TexHeight, GL_RGBA, GL_UNSIGNED_BYTE, data);
             delete[] data;
+
+			// Render the plane
+			lodPlane->setTextureID(gltex);
+			lodPlane->render(distance);
         }
 }

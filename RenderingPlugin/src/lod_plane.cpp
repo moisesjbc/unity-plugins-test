@@ -2,7 +2,7 @@
 
 INITIALIZE_EASYLOGGINGPP
 
-LODPlane::LODPlane( GLint textureID ) :
+LODPlane::LODPlane( GLuint textureID ) :
 	textureID_(textureID )
 {
     // A plane.
@@ -38,6 +38,12 @@ LODPlane::LODPlane( GLint textureID ) :
 }
 
 
+void LODPlane::setTextureID(GLuint textureID)
+{
+	textureID_ = textureID;
+}
+
+
 void LODPlane::render( float distanceToObserver )
 {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -53,7 +59,22 @@ void LODPlane::render( float distanceToObserver )
 
 	glEnableVertexAttribArray(2);
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_TRUE, stride, (const GLbyte*)vertices_.data() + 3 * sizeof(float) + sizeof(unsigned int) );
-    
+
+	GLint currentShaderProgram;
+
+	// Get current shader program id.
+	glGetIntegerv(GL_CURRENT_PROGRAM, &currentShaderProgram);
+
+	// Get location of sampler in shader.
+	const GLint samplerShaderLocation = glGetUniformLocation(currentShaderProgram, "textureSampler");
+	LOG(INFO) << "samplerShaderLocation: " << samplerShaderLocation << std::endl;
+
+	// Connect sampler to texture unit 0.
+	glActiveTexture(GL_TEXTURE0);
+	glUniform1i(samplerShaderLocation, 0);
+	glBindTexture(GL_TEXTURE_2D, textureID_ );
+	LOG(INFO) << "glGetError(): " << glGetError() << std::endl;
+
     // Draw a version of the plane or another depending on the distance between
     // the camera and the plane.
     const unsigned int N_INDICES_PER_PLANE = 6;

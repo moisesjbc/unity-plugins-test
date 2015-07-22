@@ -46,8 +46,9 @@ struct MyVertex {
 
 class LODPlane {
     public:
-		LODPlane( GLint textureID = 0 );
+		LODPlane( GLuint textureID = 0 );
     
+		void setTextureID(GLuint textureID);
         void render( float distanceToObserver );
     
     private:
@@ -57,7 +58,7 @@ class LODPlane {
     
         std::vector< MyVertex > vertices_;
         std::vector< GLubyte > indices_;
-		GLint textureID_;
+		GLuint textureID_;
 };
 
 #endif 
