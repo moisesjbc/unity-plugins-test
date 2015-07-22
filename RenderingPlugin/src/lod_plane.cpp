@@ -49,6 +49,9 @@ void LODPlane::render( float distanceToObserver )
     
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 4, GL_UNSIGNED_BYTE, GL_TRUE, stride, (const float*)vertices_.data() + 3);
+
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_TRUE, stride, (const GLbyte*)vertices_.data() + 3 * sizeof(float) + sizeof(unsigned int) );
     
     // Draw a version of the plane or another depending on the distance between
     // the camera and the plane.

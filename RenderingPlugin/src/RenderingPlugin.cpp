@@ -94,8 +94,10 @@ void EXPORT_API SetMatricesFromUnity( float* modelMatrix,
 ver																\
 attr " vec3 pos;\n"										\
 attr " vec4 color;\n"										\
+attr " vec3 uv;\n"										\
 "\n"															\
 varying " vec4 ocolor;\n"									\
+varying " vec3 ouv;\n"									\
 "\n"															\
 "uniform mat4 worldMatrix;\n"								\
 "uniform mat4 projMatrix;\n"								\
@@ -104,6 +106,7 @@ varying " vec4 ocolor;\n"									\
 "{\n"															\
 "	gl_Position = (projMatrix * worldMatrix) * vec4(pos,1);\n"	\
 "	ocolor = color;\n"											\
+"	ouv = uv;\n"											\
 "}\n"															\
 
 static const char* kGlesVProgTextGLES2		= VPROG_SRC("\n", "attribute", "varying");
@@ -114,6 +117,7 @@ static const char* kGlesVProgTextGLES2		= VPROG_SRC("\n", "attribute", "varying"
 ver												\
 outDecl											\
 varying " vec4 ocolor;\n"					\
+varying " vec3 ouv;\n"									\
 "\n"											\
 "void main()\n"									\
 "{\n"											\
