@@ -12,7 +12,8 @@
 #define GL_GLEXT_PROTOTYPES
 #if UNITY_WIN || UNITY_LINUX
     #include <windows.h>
-    #include <GL/gl3w.h>
+	#define GLEW_STATIC
+    #include <GL/glew.h>
 #elif UNITY_IPHONE
     #include <OpenGLES/ES2/gl.h>
 #elif UNITY_ANDROID

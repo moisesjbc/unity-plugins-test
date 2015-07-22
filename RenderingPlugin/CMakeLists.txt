@@ -29,16 +29,12 @@ find_package(OpenGL REQUIRED)
 find_package(GLM REQUIRED)
 # TODO: add find_package for SDL2 and use result variables.
 include_directories( ${OPENGL_INCLUDE_DIRS} ${GLM_INCLUDE_DIR} "${CMAKE_SOURCE_DIR}/include" )
-set( LIBRARIES "${OPENGL_LIBRARIES};-lgl3w;${OPENGL_LIBRARIES}" )
+set( LIBRARIES "glew32s;${OPENGL_LIBRARIES}" )
 
 # Library generation
 set( LIBRARY_DST_DIR "${CMAKE_SOURCE_DIR}/../UnityProject/Assets/Plugins" )
 set( CMAKE_LIBRARY_OUTPUT_DIRECTORY "${LIBRARY_DST_DIR}" )
 add_library( ${PROJECT_NAME} SHARED ${SOURCE_FILES} ${HEADER_FILES} )
-set_target_properties( ${PROJECT_NAME} PROPERTIES
-	PREFIX ""
-	SUFFIX ".bundle"
-)
 target_link_libraries( ${PROJECT_NAME} ${LIBRARIES} )
 
 # Test program generation

@@ -175,9 +175,11 @@ void LogOpenGLVersion()
 {
     const GLubyte* oglVersion = glGetString( GL_VERSION );
     
-    std::ofstream logFile( "rendering-plugin-log.txt", std::ofstream::out | std::ofstream::app );
-    logFile << "oglVersion: " << oglVersion << std::endl;
-    logFile.close();
+	if( oglVersion ){
+		std::ofstream logFile("rendering-plugin-log.txt", std::ofstream::out | std::ofstream::app);
+		logFile << "oglVersion: " << oglVersion << std::endl;
+		logFile.close();
+	}
 }
 
 // --------------------------------------------------------------------------
@@ -187,9 +189,20 @@ static int g_DeviceType = -1;
 
 void EXPORT_API UnitySetGraphicsDevice (void* device, int deviceType, int eventType)
 {
-    // Truncate log file.
-    std::ofstream logFile( "rendering-plugin-log.txt" );
+	std::ofstream logFile("rendering-plugin-log.txt");
+	// Truncate log file.
+
+	if ((deviceType != kGfxRendererOpenGL) && (deviceType != kGfxRendererOpenGLES20Mobile)){
+		logFile << "NO OPENGL (" << deviceType << ")" << std::endl;
+	}
+
     logFile.close();
+
+	if (glewInit() != GLEW_OK){
+		logFile << "glewInit() failed" << std::endl;
+	}
+
+	checkOpenGLStatus("UnitySetGraphicsDevice - 0");
     
     LogOpenGLVersion();
     
