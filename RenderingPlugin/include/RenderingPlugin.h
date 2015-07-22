@@ -82,6 +82,7 @@ extern "C"
     void EXPORT_API SetTextureFromUnity(void* texturePtr, int w, int h);
     void EXPORT_API UnitySetGraphicsDevice ( void* device, int deviceType, int eventType );
     void EXPORT_API UnityRenderEvent (int eventID);
+	void EXPORT_API SetPlaneTextureFromUnity(void* texturePtr);
 }
 
 #endif // RENDERING_PLUGIN_H

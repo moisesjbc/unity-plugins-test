@@ -40,6 +40,14 @@ public class UseRenderingPlugin : MonoBehaviour
 	#else
 	[DllImport ("RenderingPlugin")]
 	#endif
+	private static extern void SetPlaneTextureFromUnity(System.IntPtr texture);
+
+
+	#if UNITY_IPHONE && !UNITY_EDITOR
+	[DllImport ("__Internal")]
+	#else
+	[DllImport ("RenderingPlugin")]
+	#endif
 	private static extern void SetMatricesFromUnity( float[] modelMatrix, float[] viewMatrix, float[] projectionMatrix );
 
 
@@ -70,7 +78,16 @@ public class UseRenderingPlugin : MonoBehaviour
 
 	IEnumerator Start () {
 		InitPlugin ();
+
+		WWW www = new WWW( "http://images.earthcam.com/ec_metros/ourcams/fridays.jpg" );
+		
+		// Wait for download to complete
+		yield return www;
+
+		SetPlaneTextureFromUnity ( www.texture.GetNativeTexturePtr() );
+
 		CreateTextureAndPassToPlugin();
+
 		yield return StartCoroutine("CallPluginAtEndOfFrames");
 	}
 

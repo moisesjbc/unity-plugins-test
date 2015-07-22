@@ -16,6 +16,8 @@
 // --------------------------------------------------------------------------
 // Helper utilities
 
+LODPlane* lodPlane;
+
 // Prints a string
 static void DebugLog (const char* str)
 {
@@ -172,6 +174,12 @@ void EXPORT_API SetTextureFromUnity(void* texturePtr, int w, int h)
 }
 
 
+void EXPORT_API SetPlaneTextureFromUnity( void* texturePtr )
+{
+	lodPlane->setTextureID( (GLuint)(size_t)(texturePtr) );
+}
+
+
 void LogOpenGLVersion()
 {
     const GLubyte* oglVersion = glGetString( GL_VERSION );
@@ -256,8 +264,6 @@ static void SetDefaultGraphicsState ();
 static void DoRendering (const glm::mat4& worldMatrix,
                          const glm::mat4& viewMatrix,
                          const glm::mat4& projectionMatrix );
-
-LODPlane* lodPlane;
 
 void EXPORT_API InitPlugin()
 {
@@ -354,6 +360,9 @@ static void DoRendering ( const glm::mat4& modelMatrix,
         // Compute the distance between the camera and the plane.
         // TODO: Compute real distance.
         const float distance = glm::length( cameraPos_ );
+
+		// Render the plane
+		lodPlane->render(distance);
     
         // update native texture from code
         if (g_TexturePointer)
@@ -365,9 +374,5 @@ static void DoRendering ( const glm::mat4& modelMatrix,
             FillTextureFromCode(g_TexWidth, g_TexHeight, g_TexHeight*4, data);
             glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, g_TexWidth, g_TexHeight, GL_RGBA, GL_UNSIGNED_BYTE, data);
             delete[] data;
-
-			// Render the plane
-			lodPlane->setTextureID(gltex);
-			lodPlane->render(distance);
         }
 }
