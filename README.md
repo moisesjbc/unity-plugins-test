@@ -1,4 +1,4 @@
-# unity-plugins-test
+﻿# unity-plugins-test
 
 This is a test about creating a rendering plugin for [Unity](http://unity3d.com). When used together, we get a scene with some models rendered by Unity and some others rendered by the plugin itself.
 
@@ -11,10 +11,11 @@ This is a test about creating a rendering plugin for [Unity](http://unity3d.com)
 * [GLM (>= 0.9.6.3)](http://glm.g-truc.net/0.9.6/index.html)
 * [SDL2 (>= 2.0)](https://www.libsdl.org)
 * [SDL2_Image (>= 2.0)](https://www.libsdl.org/projects/SDL_image/)
+* [Easylogging++](https://github.com/easylogging/easyloggingpp)
 
 ## Building and running the project
 
-1. Install all the dependencies listed in previous section.
+1. Install all the dependencies listed in previous section (**except for Easyloggin++**, which is already included in this repository).
 
 2. Clone this repository. This will create a local directory which we’ll refer to as *LOCAL_REPO_DIR* in the following steps.
 

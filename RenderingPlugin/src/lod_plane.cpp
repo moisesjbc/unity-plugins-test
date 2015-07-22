@@ -1,5 +1,7 @@
 #include <lod_plane.hpp>
 
+INITIALIZE_EASYLOGGINGPP
+
 LODPlane::LODPlane()
 {
     // A plane.

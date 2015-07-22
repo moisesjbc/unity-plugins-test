@@ -43,7 +43,6 @@ extern "C" const char* getOpenGLErrorsLog()
 
 void checkOpenGLStatus( const char* situation )
 {
-    std::ofstream logFile( "rendering-plugin-log.txt", std::ofstream::out | std::ofstream::app );
     GLenum errorCode = glGetError();
     std::string errorMessage;
     switch( errorCode ){
@@ -58,9 +57,7 @@ void checkOpenGLStatus( const char* situation )
         break;
     }
         
-    logFile << errorMessage.c_str() << " at " << situation << "\n";
-    
-    logFile.close();
+    LOG(INFO) << errorMessage.c_str() << " at " << situation << "\n";
 }
 
 
@@ -142,15 +139,13 @@ static GLuint CreateShader(GLenum type, const char* text)
     GLint result;
     glGetShaderiv( ret, GL_COMPILE_STATUS, &result );
     
-    std::ofstream logFile( "rendering-plugin-log.txt", std::ofstream::out | std::ofstream::app );
-    logFile << "Shader: " << std::endl << std::endl << text << std::endl << std::endl;
-    logFile << "Shader compiler status: " << result << std::endl;
+    LOG(INFO) << "Shader: " << std::endl << std::endl << text << std::endl << std::endl;
+    LOG(INFO) << "Shader compiler status: " << result << std::endl;
     if( !result ){
         GLchar errorLog[1024] = {0};
         glGetShaderInfoLog(ret, 1024, NULL, errorLog);
-        logFile << errorLog << std::endl;
+        LOG(INFO) << errorLog << std::endl;
     }
-    logFile.close();
     
     return ret;
 }
@@ -176,9 +171,7 @@ void LogOpenGLVersion()
     const GLubyte* oglVersion = glGetString( GL_VERSION );
     
 	if( oglVersion ){
-		std::ofstream logFile("rendering-plugin-log.txt", std::ofstream::out | std::ofstream::app);
-		logFile << "oglVersion: " << oglVersion << std::endl;
-		logFile.close();
+		LOG(INFO) << "oglVersion: " << oglVersion << std::endl;
 	}
 }
 
@@ -189,17 +182,18 @@ static int g_DeviceType = -1;
 
 void EXPORT_API UnitySetGraphicsDevice (void* device, int deviceType, int eventType)
 {
-	std::ofstream logFile("rendering-plugin-log.txt");
-	// Truncate log file.
+	// Configure logger
+	el::Configurations defaultConf;
+	defaultConf.setToDefault();
+	defaultConf.set(el::Level::Info, el::ConfigurationType::Filename, "rendering-plugin-log.txt" );
+	el::Loggers::reconfigureLogger("default", defaultConf);
 
 	if ((deviceType != kGfxRendererOpenGL) && (deviceType != kGfxRendererOpenGLES20Mobile)){
-		logFile << "NO OPENGL (" << deviceType << ")" << std::endl;
+		LOG(ERROR) << "NO OPENGL (" << deviceType << ")" << std::endl;
 	}
 
-    logFile.close();
-
 	if (glewInit() != GLEW_OK){
-		logFile << "glewInit() failed" << std::endl;
+		LOG(ERROR) << "glewInit() failed" << std::endl;
 	}
 
 	checkOpenGLStatus("UnitySetGraphicsDevice - 0");
@@ -215,9 +209,7 @@ void EXPORT_API UnitySetGraphicsDevice (void* device, int deviceType, int eventT
     checkOpenGLStatus( "UnitySetGraphicsDevice - 2" );
     
     g_Program = glCreateProgram();
-    logFile.open( "rendering-plugin-log.txt", std::ofstream::out | std::ofstream::app );
-    logFile << "g_Program: " << g_Program << std::endl;
-    logFile.close();
+	LOG(INFO) << "g_Program: " << g_Program << std::endl;
     
     glBindAttribLocation(g_Program, 0, "pos");
     glBindAttribLocation(g_Program, 1, "color");
@@ -227,19 +219,15 @@ void EXPORT_API UnitySetGraphicsDevice (void* device, int deviceType, int eventT
     int result;
     
     glGetProgramiv( g_Program, GL_LINK_STATUS, &result );
-    logFile.open( "rendering-plugin-log.txt", std::ofstream::out | std::ofstream::app );
-    logFile << "Shader link status: " << result << std::endl;
+	LOG(INFO) << "Shader link status: " << result << std::endl;
     if( !result ){
         GLchar errorLog[1024] = {0};
         glGetProgramInfoLog(g_Program, 1024, NULL, errorLog);
-        logFile << errorLog << std::endl;
+		LOG(INFO) << errorLog << std::endl;
     }
-    logFile.close();
     
     glGetProgramiv( g_Program, GL_ATTACHED_SHADERS, &result );
-    logFile.open( "rendering-plugin-log.txt", std::ofstream::out | std::ofstream::app );
-    logFile << "Attached shaders status: " << result << std::endl;
-    logFile.close();
+    LOG(INFO) << "Attached shaders status: " << result << std::endl;
     
     checkOpenGLStatus( "UnitySetGraphicsDevice - 3" );
     

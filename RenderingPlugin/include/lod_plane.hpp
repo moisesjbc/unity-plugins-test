@@ -3,6 +3,8 @@
 
 #include <RenderingPlugin.h>
 
+#include <easylogging++.h>
+
 // Include headers for the graphics APIs we support
 
 #if !SUPPORT_OPENGL
