@@ -126,7 +126,7 @@ void LODPlane::subdividePlane( std::vector< MyVertex >& vertices,
     planeCentroid.z /= 4.0f;
     planeCentroid.color /= 4.0f;
 	planeCentroid.uvX /= 4.0f;
-	planeCentroid.uvY / 4.0f;
+	planeCentroid.uvY /= 4.0f;
     vertices.push_back( planeCentroid );
     const GLubyte planeCentroidIndex = vertices.size() - 1;
     
