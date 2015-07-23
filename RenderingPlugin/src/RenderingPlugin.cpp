@@ -96,10 +96,10 @@ void EXPORT_API SetMatricesFromUnity( float* modelMatrix,
 ver																\
 attr " vec3 pos;\n"										\
 attr " vec4 color;\n"										\
-attr " vec3 uv;\n"										\
+attr " vec2 uv;\n"										\
 "\n"															\
 varying " vec4 ocolor;\n"									\
-varying " vec3 ouv;\n"									\
+varying " vec2 ouv;\n"									\
 "\n"															\
 "uniform mat4 worldMatrix;\n"								\
 "uniform mat4 projMatrix;\n"								\
@@ -119,7 +119,7 @@ static const char* kGlesVProgTextGLES2 = VPROG_SRC("\n", "attribute", "varying")
 ver												\
 outDecl											\
 varying " vec4 ocolor;\n"					\
-varying " vec3 ouv;\n"									\
+varying " vec2 ouv;\n"									\
 "\n"											\
 "uniform sampler2D textureSampler;\n"			\
 "\n"											\
