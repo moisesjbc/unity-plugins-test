@@ -176,7 +176,7 @@ void EXPORT_API SetTextureFromUnity(void* texturePtr, int w, int h)
 
 void EXPORT_API SetPlaneTextureFromUnity( void* texturePtr, unsigned int lodLevel )
 {
-	lodPlane->setTextureID( (GLuint)(size_t)(texturePtr), lodLevel );
+	lodPlane->setTextureID( (GLuint)(texturePtr), lodLevel );
 }
 
 
