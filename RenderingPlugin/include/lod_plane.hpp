@@ -48,7 +48,7 @@ class LODPlane {
     public:
 		LODPlane( GLuint textureID = 0 );
     
-		void setTextureID(GLuint textureID);
+		void setTextureID( GLuint textureID, unsigned int lodLevel );
         void render( float distanceToObserver );
     
     private:
@@ -58,7 +58,7 @@ class LODPlane {
     
         std::vector< MyVertex > vertices_;
         std::vector< GLubyte > indices_;
-		GLuint textureID_;
+		std::vector < unsigned int > textureIDs_;
 };
 
 #endif 

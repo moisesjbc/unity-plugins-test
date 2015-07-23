@@ -3,7 +3,7 @@
 INITIALIZE_EASYLOGGINGPP
 
 LODPlane::LODPlane( GLuint textureID ) :
-	textureID_(textureID )
+	textureIDs_( 3, textureID )
 {
     // A plane.
     MyVertex srcVertices[] =
@@ -38,9 +38,9 @@ LODPlane::LODPlane( GLuint textureID ) :
 }
 
 
-void LODPlane::setTextureID(GLuint textureID)
+void LODPlane::setTextureID( GLuint textureID, unsigned int lodLevel )
 {
-	textureID_ = textureID;
+	textureIDs_.at( lodLevel ) = textureID;
 }
 
 
@@ -72,17 +72,20 @@ void LODPlane::render( float distanceToObserver )
 	// Connect sampler to texture unit 0.
 	glActiveTexture(GL_TEXTURE0);
 	glUniform1i(samplerShaderLocation, 0);
-	glBindTexture(GL_TEXTURE_2D, textureID_ );
+	
 	LOG(INFO) << "glGetError(): " << glGetError() << std::endl;
 
     // Draw a version of the plane or another depending on the distance between
     // the camera and the plane.
     const unsigned int N_INDICES_PER_PLANE = 6;
     if( distanceToObserver > 3.0f ){
+		glBindTexture(GL_TEXTURE_2D, textureIDs_.at( 0 ) );
         glDrawElements( GL_TRIANGLES, N_INDICES_PER_PLANE, GL_UNSIGNED_BYTE, indices_.data() );
     }else if( distanceToObserver > 2.0f ){
+		glBindTexture(GL_TEXTURE_2D, textureIDs_.at( 1 ) );
         glDrawElements( GL_TRIANGLES, 4 * N_INDICES_PER_PLANE, GL_UNSIGNED_BYTE, indices_.data() + N_INDICES_PER_PLANE );
     }else{
+		glBindTexture(GL_TEXTURE_2D, textureIDs_.at( 2 ) );
         glDrawElements( GL_TRIANGLES, 16 * N_INDICES_PER_PLANE, GL_UNSIGNED_BYTE, indices_.data() + 5 *N_INDICES_PER_PLANE );
     }
 }

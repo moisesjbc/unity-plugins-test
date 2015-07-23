@@ -40,7 +40,7 @@ public class UseRenderingPlugin : MonoBehaviour
 	#else
 	[DllImport ("RenderingPlugin")]
 	#endif
-	private static extern void SetPlaneTextureFromUnity(System.IntPtr texture);
+	private static extern void SetPlaneTextureFromUnity(System.IntPtr texture, uint lodLevel);
 
 
 	#if UNITY_IPHONE && !UNITY_EDITOR
@@ -79,12 +79,19 @@ public class UseRenderingPlugin : MonoBehaviour
 	IEnumerator Start () {
 		InitPlugin ();
 
-		WWW www = new WWW( "http://images.earthcam.com/ec_metros/ourcams/fridays.jpg" );
+
+		WWW www0 = new WWW( "http://pixelkin.org/wp-content/uploads/2014/03/Metal-Gear-Solid-Color-Logo.jpg" );
+		WWW www1 = new WWW( "https://upload.wikimedia.org/wikipedia/commons/7/7e/Metal_Gear_Solid_2_logo.png" );
+		WWW www2 = new WWW( "https://upload.wikimedia.org/wikipedia/commons/c/c0/Metal_Gear_Solid_3_logo.png" );
 		
 		// Wait for download to complete
-		yield return www;
+		yield return www0;
+		yield return www1;
+		yield return www2;
 
-		SetPlaneTextureFromUnity ( www.texture.GetNativeTexturePtr() );
+		SetPlaneTextureFromUnity ( www0.texture.GetNativeTexturePtr(), 0 );
+		SetPlaneTextureFromUnity ( www1.texture.GetNativeTexturePtr(), 1 );
+		SetPlaneTextureFromUnity ( www2.texture.GetNativeTexturePtr(), 2 );
 
 		CreateTextureAndPassToPlugin();
 
