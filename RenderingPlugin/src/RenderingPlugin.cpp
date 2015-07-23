@@ -303,7 +303,8 @@ void EXPORT_API UnityRenderEvent (int eventID)
 static void SetDefaultGraphicsState ()
 {
     glDisable(GL_CULL_FACE);
-    glDisable(GL_BLEND);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glDepthFunc(GL_LEQUAL);
     glEnable(GL_DEPTH_TEST);
     glDepthMask(GL_FALSE);
