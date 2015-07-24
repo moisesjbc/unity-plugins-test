@@ -37,6 +37,11 @@ set( LIBRARY_DST_DIR "${CMAKE_SOURCE_DIR}/../UnityProject/Assets/Plugins" )
 set( CMAKE_LIBRARY_OUTPUT_DIRECTORY "${LIBRARY_DST_DIR}" )
 add_library( ${PROJECT_NAME} SHARED ${SOURCE_FILES} ${HEADER_FILES} )
 target_link_libraries( ${PROJECT_NAME} ${LIBRARIES} )
+if( ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+	set_target_properties( ${PROJECT_NAME} PROPERTIES
+		PREFIX ""
+		SUFFIX ".bundle" )
+endif()
 
 # Test program generation
 if( BUILD_TESTS )
