@@ -9,7 +9,8 @@ This is a test about creating a rendering plugin for [Unity](http://unity3d.com)
 * [Unity (>= 5)](http://unity3d.com)
 * [Git for windows](https://msysgit.github.io/)
 * [CMake (>= 2.8)](http://www.cmake.org)
-* [Visual Studio 12](https://www.visualstudio.com/)
+* A C++ compiler of your preference. I am using [MinGW-w64](http://sourceforge.net/projects/mingw-w64/).
+* An IDE of your preference. I am using [Qt Creator](https://www.qt.io/download-open-source/).
 * [GLM (>= 0.9.6.3](glm.g-truc.net/)
 * [GLEW (>= 1.12.0](http://glew.sourceforge.net/)
 * [Easylogging++](https://github.com/easylogging/easyloggingpp)
