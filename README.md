@@ -15,6 +15,13 @@ This is a test about creating a rendering plugin for [Unity](http://unity3d.com)
 * [GLEW (>= 1.12.0](http://glew.sourceforge.net/)
 * [Easylogging++](https://github.com/easylogging/easyloggingpp)
 
+### Android dependencies
+
+* [Java SE JDK 8](http://www.oracle.com/technetwork/es/java/javase/downloads/index.html)
+* [Android SDK (tools only) (>= v24)](https://developer.android.com/sdk/index.html)
+	* Once installed, execute Android SDK Manager as administrator and install "Android  4.0.3 (API 15)" images.
+* [Android NDK (>= r10)](https://developer.android.com/ndk/downloads/index.html)
+
 ## Building and running the project
 
 1. Install all the dependencies listed in previous section (**except for Easyloggin++**, which is already included in this repository).

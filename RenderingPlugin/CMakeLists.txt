@@ -1,6 +1,8 @@
 cmake_minimum_required( VERSION 2.8 )
 set( CMAKE_BUILD_TYPE Release )
 
+set( ANDROID 1 )
+
 # Compiler flags
 set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -std=c++11" )
 
@@ -47,6 +49,10 @@ if( ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 	set_target_properties( ${PROJECT_NAME} PROPERTIES
 		PREFIX ""
 		SUFFIX ".bundle" )
+endif()
+
+if( DEFINED ANDROID )
+    message( "Building Android lib" )
 endif()
 
 # Test program generation
