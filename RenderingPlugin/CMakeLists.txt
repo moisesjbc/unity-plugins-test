@@ -31,10 +31,12 @@ find_package(GLM REQUIRED)
 # TODO: add find_package for SDL2 and use result variables.
 include_directories( ${OPENGL_INCLUDE_DIRS} ${GLM_INCLUDE_DIR} "${CMAKE_SOURCE_DIR}/include" )
 set( LIBRARIES "${OPENGL_LIBRARIES}" )
-if (!ANDROID)
-	set( LIBRARIES "glew32s;${LIBRARIES}" )
-endif( )
-
+#message( "ANDROID: [${ANDROID}]" )
+if( NOT DEFINED ANDROID )
+    set( LIBRARIES "glew32.a;${OPENGL_LIBRARIES}" )
+else()
+    message( "Android" )
+endif()
 
 # Library generation
 set( LIBRARY_DST_DIR "${CMAKE_SOURCE_DIR}/../UnityProject/Assets/Plugins" )
@@ -45,9 +47,6 @@ if( ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 	set_target_properties( ${PROJECT_NAME} PROPERTIES
 		PREFIX ""
 		SUFFIX ".bundle" )
-endif()
-if (ANDROID)
-    message(STATUS "Hello from Android build!")
 endif()
 
 # Test program generation
