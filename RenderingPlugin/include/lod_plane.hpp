@@ -3,8 +3,6 @@
 
 #include <RenderingPlugin.h>
 
-#include <easylogging++.h>
-
 // Include headers for the graphics APIs we support
 
 #if !SUPPORT_OPENGL
@@ -16,6 +14,7 @@
     #include <windows.h>
 	#define GLEW_STATIC
     #include <GL/glew.h>
+    #include <easylogging++.h>
 #elif UNITY_IPHONE
     #include <OpenGLES/ES2/gl.h>
 #elif UNITY_ANDROID

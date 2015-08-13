@@ -32,33 +32,16 @@ find_package(OpenGL REQUIRED)
 find_package(GLM REQUIRED)
 # TODO: add find_package for SDL2 and use result variables.
 include_directories( ${OPENGL_INCLUDE_DIRS} ${GLM_INCLUDE_DIR} "${CMAKE_SOURCE_DIR}/include" )
-set( LIBRARIES "${OPENGL_LIBRARIES}" )
-#message( "ANDROID: [${ANDROID}]" )
-if( NOT DEFINED ANDROID )
-    set( LIBRARIES "glew32.a;${OPENGL_LIBRARIES}" )
-else()
-    message( "Android" )
-endif()
+set( COMMON_LIBRARIES "${OPENGL_LIBRARIES}" )
+set( PC_LIBRARIES "glew32.a;${OPENGL_LIBRARIES}" )
 
 # Library generation
 set( LIBRARY_DST_DIR "${CMAKE_SOURCE_DIR}/../UnityProject/Assets/Plugins" )
 set( CMAKE_LIBRARY_OUTPUT_DIRECTORY "${LIBRARY_DST_DIR}" )
 add_library( ${PROJECT_NAME} SHARED ${SOURCE_FILES} ${HEADER_FILES} )
-target_link_libraries( ${PROJECT_NAME} ${LIBRARIES} )
+target_link_libraries( ${PROJECT_NAME} ${COMMON_LIBRARIES} ${PC_LIBRARIES} )
 if( ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 	set_target_properties( ${PROJECT_NAME} PROPERTIES
 		PREFIX ""
 		SUFFIX ".bundle" )
 endif()
-
-if( DEFINED ANDROID )
-    message( "Building Android lib" )
-endif()
-
-# Test program generation
-if( BUILD_TESTS )
-    set( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR} )
-    add_executable( "tests" "src/tests.cpp" )
-    add_dependencies( "tests" ${PROJECT_NAME} )
-    target_link_libraries( "tests" "${LIBRARIES};${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${PROJECT_NAME}.bundle;-lSDL2" )
-endif( BUILD_TESTS )
