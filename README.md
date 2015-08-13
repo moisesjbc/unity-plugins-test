@@ -21,6 +21,7 @@ This is a test about creating a rendering plugin for [Unity](http://unity3d.com)
 * [Android SDK (tools only) (>= v24)](https://developer.android.com/sdk/index.html)
 	* Once installed, execute Android SDK Manager as administrator and install "Android  4.0.3 (API 15)" images.
 * [Android NDK (>= r10)](https://developer.android.com/ndk/downloads/index.html)
+* [Make for Windows](http://gnuwin32.sourceforge.net/packages/make.htm)
 
 ## Building and running the project
 
