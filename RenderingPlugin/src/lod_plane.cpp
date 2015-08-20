@@ -1,6 +1,8 @@
 #include <lod_plane.hpp>
 
+#if !__ANDROID__ && (UNITY_WIN || UNITY_LINUX)
 INITIALIZE_EASYLOGGINGPP
+#endif
 
 LODPlane::LODPlane()
 {

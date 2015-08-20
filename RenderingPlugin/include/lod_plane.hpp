@@ -10,14 +10,14 @@
 #endif
 
 #define GL_GLEXT_PROTOTYPES
-#if UNITY_WIN || UNITY_LINUX
+#if !__ANDROID__ && (UNITY_WIN || UNITY_LINUX)
     #include <windows.h>
 	#define GLEW_STATIC
     #include <GL/glew.h>
     #include <easylogging++.h>
 #elif UNITY_IPHONE
     #include <OpenGLES/ES2/gl.h>
-#elif UNITY_ANDROID
+#elif UNITY_ANDROID || __ANDROID__
     #include <GLES2/gl2.h>
 #else
     // TODO: can't include GLES2 on Mac?
