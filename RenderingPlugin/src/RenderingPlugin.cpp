@@ -192,9 +192,11 @@ void EXPORT_API UnitySetGraphicsDevice (void* device, int deviceType, int eventT
 		LOG(ERROR) << "NO OPENGL (" << deviceType << ")" << std::endl;
 	}
 
+#if !__ANDROID__
 	if (glewInit() != GLEW_OK){
 		LOG(ERROR) << "glewInit() failed" << std::endl;
 	}
+#endif
 
 	checkOpenGLStatus("UnitySetGraphicsDevice - 0");
     
