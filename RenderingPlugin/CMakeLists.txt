@@ -24,6 +24,7 @@ set( HEADER_FILES
     "include/RenderingPlugin.h"
     "include/lod_plane.hpp"
     "include/easylogging++.h"
+    "include/platform.hpp"
 )
 
 # Find required libraries
