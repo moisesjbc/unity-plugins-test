@@ -9,12 +9,13 @@
 #error "OpenGL required!"
 #endif
 
+#include <easylogging++.h>
+
 #define GL_GLEXT_PROTOTYPES
 #if !__ANDROID__ && (UNITY_WIN || UNITY_LINUX)
     #include <windows.h>
 	#define GLEW_STATIC
     #include <GL/glew.h>
-    #include <easylogging++.h>
 #elif UNITY_IPHONE
     #include <OpenGLES/ES2/gl.h>
 #elif UNITY_ANDROID || __ANDROID__
