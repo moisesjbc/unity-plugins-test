@@ -46,3 +46,14 @@ if( ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 		PREFIX ""
 		SUFFIX ".bundle" )
 endif()
+
+# Configure Android build
+set( ANDROID_SOURCE_FILES "" )
+
+foreach( SOURCE_FILE ${SOURCE_FILES} )
+    set( ANDROID_SOURCE_FILES "${ANDROID_SOURCE_FILES} ../${SOURCE_FILE}" )
+endforeach( SOURCE_FILE SOURCE_FILES )
+
+add_custom_command( TARGET ${PROJECT_NAME} COMMAND "ndk-build" )
+
+configure_file( "jni/Android.mk.in" "jni/Android.mk" )
