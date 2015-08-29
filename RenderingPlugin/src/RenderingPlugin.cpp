@@ -90,62 +90,35 @@ void EXPORT_API SetMatricesFromUnity( float* modelMatrix,
 // --------------------------------------------------------------------------
 // shaders
 
-#define VPROG_SRC(ver, attr, varying)								\
-ver																\
-attr " vec3 pos;\n"										\
-attr " vec4 color;\n"										\
-"\n"															\
-varying " vec4 ocolor;\n"									\
-"\n"															\
-"uniform mat4 worldMatrix;\n"								\
-"uniform mat4 projMatrix;\n"								\
-"\n"															\
-"void main()\n"													\
-"{\n"															\
-"	gl_Position = (projMatrix * worldMatrix) * vec4(pos,1);\n"	\
-"	ocolor = color;\n"											\
-"}\n"															\
-
-static const char* kGlesVProgTextGLES2		= VPROG_SRC("\n", "attribute", "varying");
-
-#undef VPROG_SRC
-
-#define FSHADER_SRC(ver, varying, outDecl, outVar)	\
-ver												\
-outDecl											\
-varying " vec4 ocolor;\n"					\
-"\n"											\
-"void main()\n"									\
-"{\n"											\
-"	" outVar " = ocolor;\n"						\
-"}\n"											\
-
-static const char* kGlesFShaderTextGLES2	= FSHADER_SRC("\n", "varying", "\n", "gl_FragColor");
-
-#undef FSHADER_SRC
-
 static GLuint	g_VProg;
 static GLuint	g_FShader;
 static GLuint	g_Program = 0;
 static int		g_WorldMatrixUniformIndex;
 static int		g_ProjMatrixUniformIndex;
 
-static GLuint CreateShader(GLenum type, const char* text)
+static GLuint CreateShader(GLenum type, const char* text )
 {
+    checkOpenGLStatus( "CreateShader - 1" );
+
+    LOG(INFO) << "Shader: " << std::endl << std::endl << text << std::endl << std::endl;
     GLuint ret = glCreateShader(type);
-    glShaderSource(ret, 1, &text, NULL);
+
+    checkOpenGLStatus( "CreateShader - 2" );
+    glShaderSource( ret, 1, (const GLchar**)( &text ), nullptr );
     glCompileShader(ret);
+    checkOpenGLStatus( "CreateShader - 3" );
     
     GLint result;
     glGetShaderiv( ret, GL_COMPILE_STATUS, &result );
+    checkOpenGLStatus( "CreateShader - 4" );
     
-    LOG(INFO) << "Shader: " << std::endl << std::endl << text << std::endl << std::endl;
     LOG(INFO) << "Shader compiler status: " << result << std::endl;
     if( !result ){
         GLchar errorLog[1024] = {0};
         glGetShaderInfoLog(ret, 1024, NULL, errorLog);
         LOG(INFO) << errorLog << std::endl;
     }
+    checkOpenGLStatus( "CreateShader - 5" );
     
     return ret;
 }
@@ -205,11 +178,31 @@ void EXPORT_API UnitySetGraphicsDevice (void* device, int deviceType, int eventT
     DebugLog("OpenGLES 2.0 device\n");
     ::printf("OpenGLES 2.0 device\n");
     checkOpenGLStatus( "UnitySetGraphicsDevice - 1" );
+
+    std::ifstream shaderFile;
+    char shaderCode[1024];
     
-    g_VProg		= CreateShader(GL_VERTEX_SHADER, kGlesVProgTextGLES2);
-    g_FShader	= CreateShader(GL_FRAGMENT_SHADER, kGlesFShaderTextGLES2);
-    checkOpenGLStatus( "UnitySetGraphicsDevice - 2" );
-    
+    shaderFile.open( "Assets/Shaders/basic_vertex.shader.txt" );
+    if( shaderFile.is_open() ){
+        shaderFile.read( shaderCode, 1024 );
+        shaderCode[shaderFile.gcount()] = 0;
+        g_VProg		= CreateShader(GL_VERTEX_SHADER, shaderCode);
+        shaderFile.close();
+    }else{
+        LOG(INFO) << "Couldn't open shader file [Assets/Shaders/basic_vertex.shader]" << std::endl;
+    }
+
+    shaderFile.open( "Assets/Shaders/basic_fragment.shader.txt" );
+    if( shaderFile.is_open() ){
+        shaderFile.read( shaderCode, 1024 );
+        shaderCode[shaderFile.gcount()] = 0;
+        g_FShader	= CreateShader(GL_FRAGMENT_SHADER, shaderCode);
+        shaderFile.close();
+        checkOpenGLStatus( "UnitySetGraphicsDevice - 2" );
+    }else{
+        LOG(INFO) << "Couldn't open shader file [Assets/Shaders/basic_fragment.shader]" << std::endl;
+    }
+
     g_Program = glCreateProgram();
 	LOG(INFO) << "g_Program: " << g_Program << std::endl;
     
