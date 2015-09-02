@@ -97,9 +97,9 @@ void LODPlane::subdividePlane( std::vector< MyVertex >& vertices,
     planeCentroid.x /= 4.0f;
     planeCentroid.y /= 4.0f;
     planeCentroid.z /= 4.0f;
-    planeCentroid.color /= 4.0f;
+    planeCentroid.color /= 4;
     vertices.push_back( planeCentroid );
-    const GLubyte planeCentroidIndex = vertices.size() - 1;
+    const GLubyte planeCentroidIndex = static_cast<GLubyte>( vertices.size() - 1 );
     
     // Compute the middle vertices of the plane and push them into the vertices vector.
     GLubyte midleVertexIndices[4];
@@ -114,7 +114,7 @@ void LODPlane::subdividePlane( std::vector< MyVertex >& vertices,
                                     );
         
         vertices.push_back( middleVertex );
-        midleVertexIndices[i] = vertices.size() - 1;
+        midleVertexIndices[i] = static_cast<GLubyte>( vertices.size() - 1 );
     }
     
     // Now we have all the new vertices into vertices. Let's define the

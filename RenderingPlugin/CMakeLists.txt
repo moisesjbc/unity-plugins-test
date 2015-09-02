@@ -34,13 +34,13 @@ find_package(GLM REQUIRED)
 # TODO: add find_package for SDL2 and use result variables.
 include_directories( ${OPENGL_INCLUDE_DIRS} ${GLM_INCLUDE_DIR} "${CMAKE_SOURCE_DIR}/include" )
 set( COMMON_LIBRARIES "${OPENGL_LIBRARIES}" )
-set( PC_LIBRARIES "glew32.a;${OPENGL_LIBRARIES}" )
+set( PC_LIBRARIES "glew32s;${OPENGL_LIBRARIES};" )
 
 # Library generation
 set( LIBRARY_DST_DIR "${CMAKE_SOURCE_DIR}/../UnityProject/Assets/Plugins" )
 set( CMAKE_LIBRARY_OUTPUT_DIRECTORY "${LIBRARY_DST_DIR}" )
 add_library( ${PROJECT_NAME} SHARED ${SOURCE_FILES} ${HEADER_FILES} )
-target_link_libraries( ${PROJECT_NAME} ${COMMON_LIBRARIES} ${PC_LIBRARIES} )
+target_link_libraries( ${PROJECT_NAME} ${PC_LIBRARIES} )
 if( ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 	set_target_properties( ${PROJECT_NAME} PROPERTIES
 		PREFIX ""
