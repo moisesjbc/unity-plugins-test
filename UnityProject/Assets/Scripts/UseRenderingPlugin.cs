@@ -70,7 +70,7 @@ public class UseRenderingPlugin : MonoBehaviour
 
 	IEnumerator Start () {
 		InitPlugin ();
-		CreateTextureAndPassToPlugin();
+		//CreateTextureAndPassToPlugin();
 		yield return StartCoroutine("CallPluginAtEndOfFrames");
 	}
 
