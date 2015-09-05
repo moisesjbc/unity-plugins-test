@@ -156,10 +156,12 @@ static int g_DeviceType = -1;
 void EXPORT_API UnitySetGraphicsDevice (void* device, int deviceType, int eventType)
 {
 	// Configure logger
+#if !__ANDROID__
 	el::Configurations defaultConf;
 	defaultConf.setToDefault();
 	defaultConf.set(el::Level::Info, el::ConfigurationType::Filename, "rendering-plugin-log.txt" );
 	el::Loggers::reconfigureLogger("default", defaultConf);
+#endif
 
 	if ((deviceType != kGfxRendererOpenGL) && (deviceType != kGfxRendererOpenGLES20Mobile)){
 		LOG(ERROR) << "NO OPENGL (" << deviceType << ")" << std::endl;
