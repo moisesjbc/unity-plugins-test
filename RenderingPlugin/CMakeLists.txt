@@ -49,9 +49,9 @@ add_library( ${PROJECT_NAME} SHARED ${SOURCE_FILES} ${HEADER_FILES} )
 target_link_libraries( ${PROJECT_NAME} ${PC_LIBRARIES} )
 if( ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 	set_target_properties( ${PROJECT_NAME} PROPERTIES
-		PREFIX ""
 		SUFFIX ".bundle" )
 endif()
+set_target_properties( ${PROJECT_NAME} PROPERTIES PREFIX "" )
 
 # Configure Android build
 set( ANDROID_SOURCE_FILES "" )
