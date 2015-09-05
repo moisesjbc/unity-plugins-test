@@ -6,3 +6,5 @@ APP_CPPFLAGS += -std=c++11
 APP_CPPFLAGS += -fexceptions
 # Instruct to use the static GNU STL implementation
 APP_STL := gnustl_static
+# Output directory
+NDK_APP_OUT := ${UNITY_PLUGINS_DIR}

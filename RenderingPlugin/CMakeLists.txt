@@ -34,7 +34,13 @@ find_package(GLM REQUIRED)
 # TODO: add find_package for SDL2 and use result variables.
 include_directories( ${OPENGL_INCLUDE_DIRS} ${GLM_INCLUDE_DIR} "${CMAKE_SOURCE_DIR}/include" )
 set( COMMON_LIBRARIES "${OPENGL_LIBRARIES}" )
-set( PC_LIBRARIES "glew32s;${OPENGL_LIBRARIES};" )
+set( PC_LIBRARIES "glew32;${OPENGL_LIBRARIES};" )
+
+# Output directory
+set( UNITY_PLUGINS_DIR ${CMAKE_BINARY_DIR}/../UnityProject/Assets/Plugins )
+set( CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${UNITY_PLUGINS_DIR} )
+set( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${UNITY_PLUGINS_DIR} )
+set( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${UNITY_PLUGINS_DIR} )
 
 # Library generation
 set( LIBRARY_DST_DIR "${CMAKE_SOURCE_DIR}/../UnityProject/Assets/Plugins" )
@@ -54,6 +60,7 @@ foreach( SOURCE_FILE ${SOURCE_FILES} )
     set( ANDROID_SOURCE_FILES "${ANDROID_SOURCE_FILES} ../${SOURCE_FILE}" )
 endforeach( SOURCE_FILE SOURCE_FILES )
 
-add_custom_command( TARGET ${PROJECT_NAME} COMMAND "ndk-build" )
-
 configure_file( "jni/Android.mk.in" "jni/Android.mk" )
+configure_file( "jni/Application.mk.in" "jni/Application.mk" )
+
+add_custom_command( TARGET ${PROJECT_NAME} COMMAND "ndk-build" )
