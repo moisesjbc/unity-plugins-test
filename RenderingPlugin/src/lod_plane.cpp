@@ -18,13 +18,13 @@ LODPlane::LODPlane()
         vertices_.push_back( srcVertices[i] );
     }
     // First triangle.
-    indices_.push_back( 0 );
+    indices_.push_back( 2 );
     indices_.push_back( 1 );
-    indices_.push_back( 2 );
-    // Second triangle.
     indices_.push_back( 0 );
-    indices_.push_back( 2 );
+    // Second triangle.
     indices_.push_back( 3 );
+    indices_.push_back( 2 );
+    indices_.push_back( 0 );
     
     // Subdivide plane (2).
     subdividePlane( vertices_, indices_, 0 );
