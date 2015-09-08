@@ -327,11 +327,11 @@ static void FillTextureFromCode (int width, int height, int stride, unsigned cha
 	}
 }
 
-
 static void DoRendering ( const glm::mat4& modelMatrix,
                          const glm::mat4& viewMatrix,
                          const glm::mat4& projectionMatrix )
 {
+    if( g_Program != 0 ){
         // Set shader program
         glUseProgram(g_Program);
         
@@ -348,16 +348,17 @@ static void DoRendering ( const glm::mat4& modelMatrix,
     
         // Render the plane
         lodPlane->render( distance );
+    }
 
-        // update native texture from code
-        if (g_TexturePointer)
-        {
-            GLuint gltex = (GLuint)(size_t)(g_TexturePointer);
-            glBindTexture(GL_TEXTURE_2D, gltex);
-            
-            unsigned char* data = new unsigned char[g_TexWidth*g_TexHeight*4];
-            FillTextureFromCode(g_TexWidth, g_TexHeight, g_TexHeight*4, data);
-            glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, g_TexWidth, g_TexHeight, GL_RGBA, GL_UNSIGNED_BYTE, data);
-            delete[] data;
-        }
+    // update native texture from code
+    if (g_TexturePointer)
+    {
+        GLuint gltex = (GLuint)(size_t)(g_TexturePointer);
+        glBindTexture(GL_TEXTURE_2D, gltex);
+
+        unsigned char* data = new unsigned char[g_TexWidth*g_TexHeight*4];
+        FillTextureFromCode(g_TexWidth, g_TexHeight, g_TexHeight*4, data);
+        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, g_TexWidth, g_TexHeight, GL_RGBA, GL_UNSIGNED_BYTE, data);
+        delete[] data;
+    }
 }
