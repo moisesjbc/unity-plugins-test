@@ -7,4 +7,4 @@ APP_CPPFLAGS += -fexceptions
 # Instruct to use the static GNU STL implementation
 APP_STL := gnustl_static
 # Output directory
-NDK_APP_OUT := ${UNITY_PLUGINS_DIR}
+# NDK_APP_OUT := ${UNITY_ANDROID_PLUGINS_DIR}

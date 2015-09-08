@@ -58,7 +58,13 @@ foreach( SOURCE_FILE ${SOURCE_FILES} )
     set( ANDROID_SOURCE_FILES "${ANDROID_SOURCE_FILES} ../${SOURCE_FILE}" )
 endforeach( SOURCE_FILE SOURCE_FILES )
 
+set( UNITY_ANDROID_PLUGINS_DIR "${UNITY_PLUGINS_DIR}/Android" )
+
 configure_file( "jni/Android.mk.in" "jni/Android.mk" )
 configure_file( "jni/Application.mk.in" "jni/Application.mk" )
 
-add_custom_command( TARGET ${PROJECT_NAME} COMMAND "ndk-build" )
+add_custom_target( ${PROJECT_NAME}_android ALL
+    "ndk-build" "-B"
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${UNITY_ANDROID_PLUGINS_DIR}
+    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/libs/armeabi-v7a/libRenderingPlugin.so ${UNITY_ANDROID_PLUGINS_DIR}
+)
