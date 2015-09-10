@@ -59,13 +59,13 @@ void LODPlane::render( float distanceToObserver )
     // Draw a version of the plane or another depending on the distance between
     // the camera and the plane.
     const unsigned int N_INDICES_PER_PLANE = 6;
-    //if( distanceToObserver > 3.0f ){
+    if( distanceToObserver > 3.0f ){
         glDrawElements( GL_TRIANGLES, N_INDICES_PER_PLANE, GL_UNSIGNED_BYTE, indices_.data() );
-    //}else if( distanceToObserver > 2.0f ){
-    //    glDrawElements( GL_TRIANGLES, 4 * N_INDICES_PER_PLANE, GL_UNSIGNED_BYTE, indices_.data() + N_INDICES_PER_PLANE );
-    //}else{
-    //    glDrawElements( GL_TRIANGLES, 16 * N_INDICES_PER_PLANE, GL_UNSIGNED_BYTE, indices_.data() + 5 *N_INDICES_PER_PLANE );
-    //}
+    }else if( distanceToObserver > 2.0f ){
+        glDrawElements( GL_TRIANGLES, 4 * N_INDICES_PER_PLANE, GL_UNSIGNED_BYTE, indices_.data() + N_INDICES_PER_PLANE );
+    }else{
+        glDrawElements( GL_TRIANGLES, 16 * N_INDICES_PER_PLANE, GL_UNSIGNED_BYTE, indices_.data() + 5 *N_INDICES_PER_PLANE );
+    }
 }
 
 
