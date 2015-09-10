@@ -7,10 +7,10 @@ LODPlane::LODPlane()
     // A plane.
     MyVertex srcVertices[] =
     {
-        MyVertex( -0.5f, 1.0f, -0.5f, 0xFFff0000 ),
-        MyVertex( 0.5f, 1.0f, -0.5f, 0xFF00ff00 ),
-        MyVertex(  0.5f, 1.0f, 0.5f, 0xFF0000ff ),
-        MyVertex( -0.5f, 1.0f, 0.5f, 0xFF0f0f0f )
+        MyVertex( -0.5f, 1.0f, -0.5f, 0xFFffFFff ),
+        MyVertex( 0.5f, 1.0f, -0.5f, 0xFFffFFff ),
+        MyVertex(  0.5f, 1.0f, 0.5f, 0xFFffFFff ),
+        MyVertex( -0.5f, 1.f, 0.5f, 0xFFffFFff )
     };
     
     // Copy original plane to vertices vector
@@ -18,13 +18,13 @@ LODPlane::LODPlane()
         vertices_.push_back( srcVertices[i] );
     }
     // First triangle.
-    indices_.push_back( 0 );
+    indices_.push_back( 2 );
     indices_.push_back( 1 );
-    indices_.push_back( 2 );
-    // Second triangle.
     indices_.push_back( 0 );
-    indices_.push_back( 2 );
+    // Second triangle.
     indices_.push_back( 3 );
+    indices_.push_back( 2 );
+    indices_.push_back( 0 );
     
     // Subdivide plane (2).
     subdividePlane( vertices_, indices_, 0 );
@@ -36,31 +36,38 @@ LODPlane::LODPlane()
     subdividePlane( vertices_, indices_, 24 );
 }
 
-
 void LODPlane::render( float distanceToObserver )
 {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
-    
+    glBindTexture( GL_TEXTURE_2D, 0 );
+
     // Vertex layout.
-    const int stride = 3*sizeof(float) + sizeof(unsigned int);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (const float*)vertices_.data());
-    
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 4, GL_UNSIGNED_BYTE, GL_TRUE, stride, (const float*)vertices_.data() + 3);
-    
+    const int stride = 3*sizeof(GLfloat) + sizeof(GLuint);
+
+    GLint currentProgram;
+    glGetIntegerv( GL_CURRENT_PROGRAM, &currentProgram );
+    const GLint positionHandle = 0; // glGetAttribLocation(currentProgram, "pos");
+    const GLint colorHandle = 1; // glGetAttribLocation(currentProgram, "color");
+
+    glVertexAttribPointer(positionHandle, 3, GL_FLOAT, GL_FALSE, stride, (const GLfloat*)vertices_.data());
+    glEnableVertexAttribArray(positionHandle);
+
+    glVertexAttribPointer(colorHandle, 4, GL_UNSIGNED_BYTE, GL_TRUE, stride, (const GLfloat*)vertices_.data() + 3);
+    glEnableVertexAttribArray(colorHandle);
+
     // Draw a version of the plane or another depending on the distance between
     // the camera and the plane.
     const unsigned int N_INDICES_PER_PLANE = 6;
-    if( distanceToObserver > 3.0f ){
+    //if( distanceToObserver > 3.0f ){
         glDrawElements( GL_TRIANGLES, N_INDICES_PER_PLANE, GL_UNSIGNED_BYTE, indices_.data() );
-    }else if( distanceToObserver > 2.0f ){
-        glDrawElements( GL_TRIANGLES, 4 * N_INDICES_PER_PLANE, GL_UNSIGNED_BYTE, indices_.data() + N_INDICES_PER_PLANE );
-    }else{
-        glDrawElements( GL_TRIANGLES, 16 * N_INDICES_PER_PLANE, GL_UNSIGNED_BYTE, indices_.data() + 5 *N_INDICES_PER_PLANE );
-    }
+    //}else if( distanceToObserver > 2.0f ){
+    //    glDrawElements( GL_TRIANGLES, 4 * N_INDICES_PER_PLANE, GL_UNSIGNED_BYTE, indices_.data() + N_INDICES_PER_PLANE );
+    //}else{
+    //    glDrawElements( GL_TRIANGLES, 16 * N_INDICES_PER_PLANE, GL_UNSIGNED_BYTE, indices_.data() + 5 *N_INDICES_PER_PLANE );
+    //}
 }
+
 
 
 void LODPlane::subdividePlane( std::vector< MyVertex >& vertices,

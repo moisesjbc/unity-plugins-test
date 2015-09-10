@@ -1,4 +1,8 @@
-varying vec4 ocolor;
+#ifndef GL_ES
+	#define lowp
+#endif
+
+varying lowp vec4 ocolor;
 
 void main()
 {
