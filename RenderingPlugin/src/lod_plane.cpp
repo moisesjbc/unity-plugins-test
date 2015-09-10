@@ -69,6 +69,23 @@ void LODPlane::render( float distanceToObserver )
 }
 
 
+glm::vec4 LODPlane::centroid() const
+{
+    glm::vec4 centroid( 0.0f );
+
+    for( unsigned int i = 0; i < 4; i++ ){
+        centroid.x += vertices_[i].x;
+        centroid.y += vertices_[i].y;
+        centroid.z += vertices_[i].z;
+    }
+
+    centroid /= 3.0f;
+    centroid[3] = 1.0f;
+
+    return centroid;
+}
+
+
 
 void LODPlane::subdividePlane( std::vector< MyVertex >& vertices,
                               std::vector< GLubyte>& indices,

@@ -356,7 +356,7 @@ static void DoRendering ( const glm::mat4& modelMatrix,
     
         // Compute the distance between the camera and the plane.
         // TODO: Compute real distance.
-        const float distance = glm::length( cameraPos_ );
+        const float distance = glm::distance( cameraPos_, lodPlane->centroid() );
     
         // Render the plane
         lodPlane->render( distance );

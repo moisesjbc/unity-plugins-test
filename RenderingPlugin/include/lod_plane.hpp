@@ -6,6 +6,7 @@
 #include <platform.hpp>
 
 #include <vector>
+#include <glm/glm.hpp>
 
 struct MyVertex {
     float x, y, z;
@@ -25,6 +26,8 @@ class LODPlane {
         LODPlane();
     
         void render( float distanceToObserver );
+
+        glm::vec4 centroid() const;
     
     private:
         void subdividePlane( std::vector< MyVertex >& vertices,
