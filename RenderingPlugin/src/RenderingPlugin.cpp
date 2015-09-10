@@ -186,32 +186,37 @@ void EXPORT_API UnitySetGraphicsDevice (void* device, int deviceType, int eventT
     ::printf("OpenGLES 2.0 device\n");
     checkOpenGLStatus( "UnitySetGraphicsDevice - 1" );
 
-    std::ifstream shaderFile;
-    char shaderCode[1024];
-    
-    shaderFile.open( "Assets/Shaders/basic_vertex.shader.txt" );
-    if( shaderFile.is_open() ){
-        shaderFile.read( shaderCode, 1024 );
-        shaderCode[shaderFile.gcount()] = 0;
-        g_VProg		= CreateShader(GL_VERTEX_SHADER, shaderCode);
-        shaderFile.close();
-    }else{
-        LOG(INFO) << "Couldn't open shader file [Assets/Shaders/basic_vertex.shader]" << std::endl;
-    }
+    char vertexShaderCode[] =
+        "attribute vec3 pos;\
+        attribute vec4 color;\
+        \
+        varying vec4 ocolor;\
+        \
+        uniform mat4 worldMatrix;\
+        uniform mat4 projMatrix;\
+        \
+        void main()\
+        {\
+            gl_Position = (projMatrix * worldMatrix) * vec4(pos,1);\
+            ocolor = color;\
+        }";
 
-    shaderFile.open( "Assets/Shaders/basic_fragment.shader.txt" );
-    if( shaderFile.is_open() ){
-        shaderFile.read( shaderCode, 1024 );
-        shaderCode[shaderFile.gcount()] = 0;
-        g_FShader	= CreateShader(GL_FRAGMENT_SHADER, shaderCode);
-        shaderFile.close();
-        checkOpenGLStatus( "UnitySetGraphicsDevice - 2" );
-    }else{
-        LOG(INFO) << "Couldn't open shader file [Assets/Shaders/basic_fragment.shader]" << std::endl;
-    }
+    char fragmetShaderCode[] =
+        "precision mediump float;\
+        varying vec4 ocolor;\
+        \
+        void main()\
+        {\
+            gl_FragColor = ocolor;\
+        }";
+    
+    g_VProg		= CreateShader(GL_VERTEX_SHADER, vertexShaderCode);
+    g_FShader	= CreateShader(GL_FRAGMENT_SHADER, fragmetShaderCode);
+
+    checkOpenGLStatus( "UnitySetGraphicsDevice - 2" );
 
     g_Program = glCreateProgram();
-	LOG(INFO) << "g_Program: " << g_Program << std::endl;
+    LOG(INFO) << "g_Program: " << g_Program << std::endl;
     
     glBindAttribLocation(g_Program, 0, "pos");
     glBindAttribLocation(g_Program, 1, "color");
