@@ -7,10 +7,10 @@ LODPlane::LODPlane()
     // A plane.
     MyVertex srcVertices[] =
     {
-        MyVertex( -0.5f, 0.5f, -0.5f, 0xFFff0000 ),
-        MyVertex( 0.5f, 0.5f, -0.5f, 0xFF00ff00 ),
-        MyVertex(  0.5f, 0.5f, 0.5f, 0xFF0000ff ),
-        MyVertex( -0.5f, 0.5f, 0.5f, 0xFF0f0f0f )
+        MyVertex( -0.5f, 1.0f, -0.5f, 0xFFffFFff ),
+        MyVertex( 0.5f, 1.0f, -0.5f, 0xFFffFFff ),
+        MyVertex(  0.5f, 1.0f, 0.5f, 0xFFffFFff ),
+        MyVertex( -0.5f, 1.f, 0.5f, 0xFFffFFff )
     };
     
     // Copy original plane to vertices vector
