@@ -18,5 +18,15 @@ public class MoveCamera : MonoBehaviour {
 		{
 			transform.Translate( -step * Vector3.forward );
 		}
+
+		if (Input.touchCount > 0) {
+			Touch touch = Input.GetTouch(0);
+			TouchPhase phase = touch.phase;
+
+			if( phase == TouchPhase.Moved ){
+				transform.Translate( 0.25f * touch.deltaPosition.y * Vector3.forward );
+				transform.Translate( 0.25f * touch.deltaPosition.x * Vector3.right );
+			}
+		}
 	}
 }
