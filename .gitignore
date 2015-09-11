@@ -20,6 +20,10 @@
 # Android packets
 *.apk
 
+# Android generated makefiles
+RenderingPlugin/jni/Android.mk
+RenderingPlugin/jni/Application.mk
+
 # Unity3D Generated File On Crash Reports
 sysinfo.txt
 
