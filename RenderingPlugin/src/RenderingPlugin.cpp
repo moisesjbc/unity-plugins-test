@@ -288,18 +288,6 @@ void EXPORT_API UnityRenderEvent (int eventID)
 }
 
 
-// --------------------------------------------------------------------------
-// SetDefaultGraphicsState
-//
-// Helper function to setup some "sane" graphics state. Rendering state
-// upon call into our plugin can be almost completely arbitrary depending
-// on what was rendered in Unity before.
-// Before calling into the plugin, Unity will set shaders to null,
-// and will unbind most of "current" objects (e.g. VBOs in OpenGL case).
-//
-// Here, we set culling off, lighting off, alpha blend & test off, Z
-// comparison to less equal, and Z writes off.
-
 static void SetDefaultGraphicsState ()
 {
 	glEnable(GL_BLEND);
