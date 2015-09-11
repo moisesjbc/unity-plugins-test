@@ -9,10 +9,19 @@ This is a test about creating a rendering plugin for [Unity](http://unity3d.com)
 * [Unity (>= 5)](http://unity3d.com)
 * [Git for windows](https://msysgit.github.io/)
 * [CMake (>= 2.8)](http://www.cmake.org)
-* [Visual Studio 12](https://www.visualstudio.com/)
+* A C++ compiler of your preference. I am using [MinGW-w64](http://sourceforge.net/projects/mingw-w64/).
+* An IDE of your preference. I am using [Qt Creator](https://www.qt.io/download-open-source/).
 * [GLM (>= 0.9.6.3](glm.g-truc.net/)
 * [GLEW (>= 1.12.0](http://glew.sourceforge.net/)
 * [Easylogging++](https://github.com/easylogging/easyloggingpp)
+
+### Android dependencies
+
+* [Java SE JDK 8](http://www.oracle.com/technetwork/es/java/javase/downloads/index.html)
+* [Android SDK (tools only) (>= v24)](https://developer.android.com/sdk/index.html)
+	* Once installed, execute Android SDK Manager as administrator and install "Android  4.0.3 (API 15)" images.
+* [Android NDK (>= r10)](https://developer.android.com/ndk/downloads/index.html)
+* [Make for Windows](http://gnuwin32.sourceforge.net/packages/make.htm)
 
 ## Building and running the project
 
@@ -30,9 +39,9 @@ This is a test about creating a rendering plugin for [Unity](http://unity3d.com)
 
 5. Close cmake-gui and open the project generated in the previous step.
 
-6. Build the plugin and copy it to *LOCAL_REPO_DIR*/UnityProject/Assets/Plugins
+6. Build the plugin.
 
-7. Now run Unity **forcing it to use OpenGL**
+7. Now run Unity **forcing it to use OpenGL**.
 
  ```
  "C:\Program Files\Unity\Editor\Unity.exe" -force-opengl

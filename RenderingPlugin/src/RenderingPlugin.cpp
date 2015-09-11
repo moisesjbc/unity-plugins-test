@@ -16,7 +16,7 @@
 // --------------------------------------------------------------------------
 // Helper utilities
 
-LODPlane* lodPlane;
+std::unique_ptr<LODPlane> lodPlane;
 
 // Prints a string
 static void DebugLog (const char* str)
@@ -92,68 +92,35 @@ void EXPORT_API SetMatricesFromUnity( float* modelMatrix,
 // --------------------------------------------------------------------------
 // shaders
 
-#define VPROG_SRC(ver, attr, varying)								\
-ver																\
-attr " vec3 pos;\n"										\
-attr " vec4 color;\n"										\
-attr " vec2 uv;\n"										\
-"\n"															\
-varying " vec4 ocolor;\n"									\
-varying " vec2 ouv;\n"									\
-"\n"															\
-"uniform mat4 worldMatrix;\n"								\
-"uniform mat4 projMatrix;\n"								\
-"\n"															\
-"void main()\n"													\
-"{\n"															\
-"	gl_Position = (projMatrix * worldMatrix) * vec4(pos,1);\n"	\
-"	ocolor = color;\n"											\
-"	ouv = uv;\n"											\
-"}\n"															\
-
-static const char* kGlesVProgTextGLES2 = VPROG_SRC("\n", "attribute", "varying");
-
-#undef VPROG_SRC
-
-#define FSHADER_SRC(ver, varying, outDecl, outVar)	\
-ver												\
-outDecl											\
-varying " vec4 ocolor;\n"					\
-varying " vec2 ouv;\n"									\
-"\n"											\
-"uniform sampler2D textureSampler;\n"			\
-"\n"											\
-"void main()\n"									\
-"{\n"											\
-"	" outVar " = texture( textureSampler, ouv );\n"\
-"}\n"											\
-
-static const char* kGlesFShaderTextGLES2	= FSHADER_SRC("\n", "varying", "\n", "gl_FragColor");
-
-#undef FSHADER_SRC
-
 static GLuint	g_VProg;
 static GLuint	g_FShader;
 static GLuint	g_Program = 0;
 static int		g_WorldMatrixUniformIndex;
 static int		g_ProjMatrixUniformIndex;
 
-static GLuint CreateShader(GLenum type, const char* text)
+static GLuint CreateShader(GLenum type, const char* text )
 {
+    checkOpenGLStatus( "CreateShader - 1" );
+
+    LOG(INFO) << "Shader: " << std::endl << std::endl << text << std::endl << std::endl;
     GLuint ret = glCreateShader(type);
-    glShaderSource(ret, 1, &text, NULL);
+
+    checkOpenGLStatus( "CreateShader - 2" );
+    glShaderSource( ret, 1, (const GLchar**)( &text ), nullptr );
     glCompileShader(ret);
+    checkOpenGLStatus( "CreateShader - 3" );
     
     GLint result;
     glGetShaderiv( ret, GL_COMPILE_STATUS, &result );
+    checkOpenGLStatus( "CreateShader - 4" );
     
-    LOG(INFO) << "Shader: " << std::endl << std::endl << text << std::endl << std::endl;
     LOG(INFO) << "Shader compiler status: " << result << std::endl;
     if( !result ){
         GLchar errorLog[1024] = {0};
         glGetShaderInfoLog(ret, 1024, NULL, errorLog);
         LOG(INFO) << errorLog << std::endl;
     }
+    checkOpenGLStatus( "CreateShader - 5" );
     
     return ret;
 }
@@ -174,9 +141,9 @@ void EXPORT_API SetTextureFromUnity(void* texturePtr, int w, int h)
 }
 
 
-void EXPORT_API SetPlaneTextureFromUnity( void* texturePtr, unsigned int lodLevel )
+void EXPORT_API SetPlaneTextureFromUnity( GLuint texturePtr, unsigned int lodLevel )
 {
-	lodPlane->setTextureID( (GLuint)(texturePtr), lodLevel );
+    lodPlane->setTextureID( texturePtr, lodLevel );
 }
 
 
@@ -197,18 +164,23 @@ static int g_DeviceType = -1;
 void EXPORT_API UnitySetGraphicsDevice (void* device, int deviceType, int eventType)
 {
 	// Configure logger
-	el::Configurations defaultConf;
-	defaultConf.setToDefault();
-	defaultConf.set(el::Level::Info, el::ConfigurationType::Filename, "rendering-plugin-log.txt" );
-	el::Loggers::reconfigureLogger("default", defaultConf);
+#if !__ANDROID__
+    const char logFilePath[] = "rendering-plugin-log.txt";
+    el::Configurations defaultConf;
+    defaultConf.setToDefault();
+    defaultConf.set(el::Level::Info, el::ConfigurationType::Filename, logFilePath );
+    el::Loggers::reconfigureLogger("default", defaultConf);
+#endif
 
 	if ((deviceType != kGfxRendererOpenGL) && (deviceType != kGfxRendererOpenGLES20Mobile)){
 		LOG(ERROR) << "NO OPENGL (" << deviceType << ")" << std::endl;
 	}
 
+#if !__ANDROID__
 	if (glewInit() != GLEW_OK){
 		LOG(ERROR) << "glewInit() failed" << std::endl;
 	}
+#endif
 
 	checkOpenGLStatus("UnitySetGraphicsDevice - 0");
     
@@ -217,13 +189,44 @@ void EXPORT_API UnitySetGraphicsDevice (void* device, int deviceType, int eventT
     DebugLog("OpenGLES 2.0 device\n");
     ::printf("OpenGLES 2.0 device\n");
     checkOpenGLStatus( "UnitySetGraphicsDevice - 1" );
+
+    char vertexShaderCode[] =
+        "attribute vec3 pos;\
+        attribute vec4 color;\
+        attribute vec2 uv;\
+        \
+        varying vec4 ocolor;\
+        varying vec2 ouv;\
+        \
+        uniform mat4 worldMatrix;\
+        uniform mat4 projMatrix;\
+        \
+        void main()\
+        {\
+            gl_Position = (projMatrix * worldMatrix) * vec4(pos,1);\
+            ocolor = color;\
+            ouv = uv;\
+        }";
+
+    char fragmetShaderCode[] =
+        "precision mediump float;\
+        varying vec4 ocolor;\
+        varying vec2 ouv;\
+        \
+        uniform sampler2D textureSampler;\
+        \
+        void main()\
+        {\
+            gl_FragColor = texture( textureSampler, ouv );\
+        }";
     
-    g_VProg		= CreateShader(GL_VERTEX_SHADER, kGlesVProgTextGLES2);
-    g_FShader	= CreateShader(GL_FRAGMENT_SHADER, kGlesFShaderTextGLES2);
+    g_VProg		= CreateShader(GL_VERTEX_SHADER, vertexShaderCode);
+    g_FShader	= CreateShader(GL_FRAGMENT_SHADER, fragmetShaderCode);
+
     checkOpenGLStatus( "UnitySetGraphicsDevice - 2" );
-    
+
     g_Program = glCreateProgram();
-	LOG(INFO) << "g_Program: " << g_Program << std::endl;
+    LOG(INFO) << "g_Program: " << g_Program << std::endl;
     
     glBindAttribLocation(g_Program, 0, "pos");
     glBindAttribLocation(g_Program, 1, "color");
@@ -250,6 +253,8 @@ void EXPORT_API UnitySetGraphicsDevice (void* device, int deviceType, int eventT
     checkOpenGLStatus( "UnitySetGraphicsDevice - 4" );
     
     g_DeviceType = deviceType;
+
+    el::Loggers::flushAll();
 }
 
 
@@ -267,12 +272,7 @@ static void DoRendering (const glm::mat4& worldMatrix,
 
 void EXPORT_API InitPlugin()
 {
-    lodPlane = new LODPlane();
-}
-
-void EXPORT_API DestroyPlugin()
-{
-    delete lodPlane;
+    lodPlane = std::unique_ptr<LODPlane>( new LODPlane );
 }
 
 
@@ -302,9 +302,9 @@ void EXPORT_API UnityRenderEvent (int eventID)
 
 static void SetDefaultGraphicsState ()
 {
-    glDisable(GL_CULL_FACE);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_CULL_FACE);
     glDepthFunc(GL_LEQUAL);
     glEnable(GL_DEPTH_TEST);
     glDepthMask(GL_FALSE);
@@ -343,11 +343,11 @@ static void FillTextureFromCode (int width, int height, int stride, unsigned cha
 	}
 }
 
-
 static void DoRendering ( const glm::mat4& modelMatrix,
                          const glm::mat4& viewMatrix,
                          const glm::mat4& projectionMatrix )
 {
+    if( g_Program != 0 ){
         // Set shader program
         glUseProgram(g_Program);
         
@@ -359,21 +359,21 @@ static void DoRendering ( const glm::mat4& modelMatrix,
         glUniformMatrix4fv(g_ProjMatrixUniformIndex, 1, GL_FALSE, glm::value_ptr( projectionMatrix ) );
     
         // Compute the distance between the camera and the plane.
-        // TODO: Compute real distance.
-        const float distance = glm::length( cameraPos_ );
-
-		// Render the plane
-		lodPlane->render(distance);
+        const float distance = glm::distance( cameraPos_, lodPlane->centroid() );
     
-        // update native texture from code
-        if (g_TexturePointer)
-        {
-            GLuint gltex = (GLuint)(size_t)(g_TexturePointer);
-            glBindTexture(GL_TEXTURE_2D, gltex);
-            
-            unsigned char* data = new unsigned char[g_TexWidth*g_TexHeight*4];
-            FillTextureFromCode(g_TexWidth, g_TexHeight, g_TexHeight*4, data);
-            glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, g_TexWidth, g_TexHeight, GL_RGBA, GL_UNSIGNED_BYTE, data);
-            delete[] data;
-        }
+        // Render the plane
+        lodPlane->render( distance );
+    }
+
+    // update native texture from code
+    if (g_TexturePointer)
+    {
+        GLuint gltex = (GLuint)(size_t)(g_TexturePointer);
+        glBindTexture(GL_TEXTURE_2D, gltex);
+
+        unsigned char* data = new unsigned char[g_TexWidth*g_TexHeight*4];
+        FillTextureFromCode(g_TexWidth, g_TexHeight, g_TexHeight*4, data);
+        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, g_TexWidth, g_TexHeight, GL_RGBA, GL_UNSIGNED_BYTE, data);
+        delete[] data;
+    }
 }

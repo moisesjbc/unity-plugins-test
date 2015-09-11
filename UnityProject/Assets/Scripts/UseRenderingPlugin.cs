@@ -40,7 +40,7 @@ public class UseRenderingPlugin : MonoBehaviour
 	#else
 	[DllImport ("RenderingPlugin")]
 	#endif
-	private static extern void SetPlaneTextureFromUnity(System.IntPtr texture, uint lodLevel);
+	private static extern void SetPlaneTextureFromUnity( uint texture, uint lodLevel);
 
 
 	#if UNITY_IPHONE && !UNITY_EDITOR
@@ -57,14 +57,6 @@ public class UseRenderingPlugin : MonoBehaviour
 	[DllImport ("RenderingPlugin")]
 	#endif
 	private static extern void InitPlugin ();
-	
-
-	#if UNITY_IPHONE && !UNITY_EDITOR
-	[DllImport ("__Internal")]
-	#else
-	[DllImport ("RenderingPlugin")]
-	#endif
-	private static extern void DestroyPlugin ();
 
 
 	#if UNITY_IPHONE && !UNITY_EDITOR
@@ -73,7 +65,6 @@ public class UseRenderingPlugin : MonoBehaviour
 	[DllImport ("RenderingPlugin")]
 	#endif
 	private static extern char[] getOpenGLErrorsLog ();
-
 
 
 	IEnumerator Start () {
@@ -88,18 +79,13 @@ public class UseRenderingPlugin : MonoBehaviour
 		yield return www1;
 		yield return www2;
 
-		SetPlaneTextureFromUnity ( www0.texture.GetNativeTexturePtr(), 0 );
-		SetPlaneTextureFromUnity ( www1.texture.GetNativeTexturePtr(), 1 );
-		SetPlaneTextureFromUnity ( www2.texture.GetNativeTexturePtr(), 2 );
+		SetPlaneTextureFromUnity ( (uint)( www0.texture.GetNativeTexturePtr() ), 0 );
+		SetPlaneTextureFromUnity ( (uint)( www1.texture.GetNativeTexturePtr() ), 1 );
+		SetPlaneTextureFromUnity ( (uint)( www2.texture.GetNativeTexturePtr() ), 2 );
 
 		CreateTextureAndPassToPlugin();
 
 		yield return StartCoroutine("CallPluginAtEndOfFrames");
-	}
-
-
-	void OnDestroy() {
-		DestroyPlugin ();
 	}
 
 
