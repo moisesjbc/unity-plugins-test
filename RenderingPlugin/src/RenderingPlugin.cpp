@@ -158,15 +158,11 @@ void EXPORT_API UnitySetGraphicsDevice (void* device, int deviceType, int eventT
 	// Configure logger
 #if !__ANDROID__
     const char logFilePath[] = "rendering-plugin-log.txt";
-#else
-    const char logFilePath[] = "sdcard/logs/rendering-plugin-log.txt";
-#endif
     el::Configurations defaultConf;
     defaultConf.setToDefault();
     defaultConf.set(el::Level::Info, el::ConfigurationType::Filename, logFilePath );
     el::Loggers::reconfigureLogger("default", defaultConf);
-
-    LOG(INFO) << "Log initiated" << std::endl;
+#endif
 
 	if ((deviceType != kGfxRendererOpenGL) && (deviceType != kGfxRendererOpenGLES20Mobile)){
 		LOG(ERROR) << "NO OPENGL (" << deviceType << ")" << std::endl;
