@@ -9,8 +9,8 @@ LODPlane::LODPlane()
     {
         MyVertex( -1.5f, 1.0f, -1.0f, 0xFFff0000 ),
         MyVertex( -0.5f, 1.0f, -1.0f, 0xFF00ff00 ),
-        MyVertex(  -0.5f, 1.0f, -0.0f, 0xFF0000ff ),
-        MyVertex( -1.5f, 1.f, -0.0f, 0xFF0f0f0f )
+        MyVertex(  -0.5f, 1.0f, 0.0f, 0xFF0000ff ),
+        MyVertex( -1.5f, 1.f, 0.0f, 0xFF0f0f0f )
     };
     
     // Copy original plane to vertices vector
@@ -64,7 +64,7 @@ void LODPlane::render( float distanceToObserver )
     }else if( distanceToObserver > 2.0f ){
         glDrawElements( GL_TRIANGLES, 4 * N_INDICES_PER_PLANE, GL_UNSIGNED_BYTE, indices_.data() + N_INDICES_PER_PLANE );
     }else{
-        glDrawElements( GL_TRIANGLES, 16 * N_INDICES_PER_PLANE, GL_UNSIGNED_BYTE, indices_.data() + 5 *N_INDICES_PER_PLANE );
+        glDrawElements( GL_TRIANGLES, 16 * N_INDICES_PER_PLANE, GL_UNSIGNED_BYTE, indices_.data() + 5 * N_INDICES_PER_PLANE );
     }
 }
 
@@ -86,7 +86,6 @@ glm::vec4 LODPlane::centroid() const
 }
 
 
-
 void LODPlane::subdividePlane( std::vector< MyVertex >& vertices,
                               std::vector< GLubyte>& indices,
                               unsigned int planeFirstVertexIndex )
@@ -94,10 +93,10 @@ void LODPlane::subdividePlane( std::vector< MyVertex >& vertices,
     // Retrieve all the indices of the plane to be subdivided.
     const GLubyte planeVertexIndices[4] =
     {
-        indices[ planeFirstVertexIndex ],
-        indices[ planeFirstVertexIndex + 1 ],
-        indices[ planeFirstVertexIndex + 2 ],
-        indices[ planeFirstVertexIndex + 5 ]
+        indices[planeFirstVertexIndex + 2],
+        indices[planeFirstVertexIndex + 1],
+        indices[planeFirstVertexIndex],
+        indices[planeFirstVertexIndex + 3]
     };
     
     // Retrieve all the vertices of the plane being subdivided.
@@ -145,34 +144,41 @@ void LODPlane::subdividePlane( std::vector< MyVertex >& vertices,
     // subplanes by feeding indices vector with new indices.
     
     // Subplane 0
-    indices.push_back( planeVertexIndices[0] );
+    indices.push_back( planeCentroidIndex );
     indices.push_back( midleVertexIndices[0] );
+    indices.push_back( planeVertexIndices[0] );
+
+    indices.push_back( midleVertexIndices[3] );
     indices.push_back( planeCentroidIndex );
     indices.push_back( planeVertexIndices[0] );
-    indices.push_back( planeCentroidIndex );
-    indices.push_back( midleVertexIndices[3] );
+
     
     // Subplane 1
-    indices.push_back( midleVertexIndices[0] );
+    indices.push_back( midleVertexIndices[1] );
     indices.push_back( planeVertexIndices[1] );
+    indices.push_back( midleVertexIndices[0] );
+
+    indices.push_back( planeCentroidIndex );
     indices.push_back( midleVertexIndices[1] );
     indices.push_back( midleVertexIndices[0] );
-    indices.push_back( midleVertexIndices[1] );
-    indices.push_back( planeCentroidIndex );
+
     
     // Subplane 2
-    indices.push_back( planeCentroidIndex );
+    indices.push_back( planeVertexIndices[2] );
     indices.push_back( midleVertexIndices[1] );
+    indices.push_back( planeCentroidIndex );
+
+    indices.push_back( midleVertexIndices[2] );
     indices.push_back( planeVertexIndices[2] );
     indices.push_back( planeCentroidIndex );
-    indices.push_back( planeVertexIndices[2] );
-    indices.push_back( midleVertexIndices[2] );
+
     
     // Subplane 3
-    indices.push_back( midleVertexIndices[3] );
+    indices.push_back( midleVertexIndices[2] );
     indices.push_back( planeCentroidIndex );
+    indices.push_back( midleVertexIndices[3] );
+
+    indices.push_back( planeVertexIndices[3] );
     indices.push_back( midleVertexIndices[2] );
     indices.push_back( midleVertexIndices[3] );
-    indices.push_back( midleVertexIndices[2] );
-    indices.push_back( planeVertexIndices[3] );
 }
