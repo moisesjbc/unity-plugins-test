@@ -39,9 +39,9 @@ This is a test about creating a rendering plugin for [Unity](http://unity3d.com)
 
 5. Close cmake-gui and open the project generated in the previous step.
 
-6. Build the plugin and copy it to *LOCAL_REPO_DIR*/UnityProject/Assets/Plugins
+6. Build the plugin.
 
-7. Now run Unity **forcing it to use OpenGL**
+7. Now run Unity **forcing it to use OpenGL**.
 
  ```
  "C:\Program Files\Unity\Editor\Unity.exe" -force-opengl
