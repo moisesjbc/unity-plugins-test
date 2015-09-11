@@ -217,7 +217,7 @@ void EXPORT_API UnitySetGraphicsDevice (void* device, int deviceType, int eventT
         \
         void main()\
         {\
-            gl_FragColor = texture( textureSampler, ouv );\
+            gl_FragColor = texture2D( textureSampler, ouv );\
         }";
     
     g_VProg		= CreateShader(GL_VERTEX_SHADER, vertexShaderCode);
