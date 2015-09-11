@@ -260,16 +260,11 @@ static void DoRendering (const glm::mat4& worldMatrix,
                          const glm::mat4& viewMatrix,
                          const glm::mat4& projectionMatrix );
 
-LODPlane* lodPlane;
+std::unique_ptr<LODPlane> lodPlane;
 
 void EXPORT_API InitPlugin()
 {
-    lodPlane = new LODPlane;
-}
-
-void EXPORT_API DestroyPlugin()
-{
-    delete lodPlane;
+    lodPlane = std::unique_ptr<LODPlane>( new LODPlane );
 }
 
 
