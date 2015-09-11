@@ -17,6 +17,9 @@
 # Unity3D generated meta files
 *.pidb.meta
 
+# Android packets
+*.apk
+
 # Unity3D Generated File On Crash Reports
 sysinfo.txt
 
