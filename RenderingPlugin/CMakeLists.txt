@@ -18,6 +18,7 @@ set( PROJECT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${
 set( SOURCE_FILES
     "src/RenderingPlugin.cpp"
     "src/lod_plane.cpp"
+    "src/shaders.cpp"
 )
 
 # Header files
@@ -26,6 +27,7 @@ set( HEADER_FILES
     "include/lod_plane.hpp"
     "include/easylogging++.h"
     "include/platform.hpp"
+    "include/shaders.hpp"
 )
 
 # Find required libraries

@@ -65,5 +65,27 @@
     #include <OpenGL/gl3.h>
 #endif
 
+
+#define OPENGL_ERROR_CASE(str,errorCode) case(errorCode): str=#errorCode; break;
+
+inline void checkOpenGLStatus( const char* situation )
+{
+    GLenum errorCode = glGetError();
+    std::string errorMessage;
+    switch( errorCode ){
+        OPENGL_ERROR_CASE( errorMessage, GL_NO_ERROR );
+        OPENGL_ERROR_CASE( errorMessage, GL_INVALID_ENUM );
+        OPENGL_ERROR_CASE( errorMessage, GL_INVALID_VALUE );
+        OPENGL_ERROR_CASE( errorMessage, GL_INVALID_OPERATION );
+        OPENGL_ERROR_CASE( errorMessage, GL_INVALID_FRAMEBUFFER_OPERATION );
+        OPENGL_ERROR_CASE( errorMessage, GL_OUT_OF_MEMORY );
+        default:
+            errorMessage = "Unknown error";
+        break;
+    }
+
+    LOG(INFO) << errorMessage.c_str() << " at " << situation << "\n";
+}
+
 #endif // PLATFORM_HPP
 

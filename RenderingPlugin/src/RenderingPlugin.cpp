@@ -5,13 +5,11 @@
 #include <math.h>
 #include <stdio.h>
 #include <vector>
-#define GLM_FORCE_RADIANS
-#include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp>
 #include <array>
 #include <string>
 #include <fstream>
 #include <lod_plane.hpp>
+#include <shaders.hpp>
 
 // --------------------------------------------------------------------------
 // Helper utilities
@@ -41,28 +39,6 @@ extern "C" const char* getOpenGLErrorsLog()
 }
 
 
-#define OPENGL_ERROR_CASE(str,errorCode) case(errorCode): str=#errorCode; break;
-
-void checkOpenGLStatus( const char* situation )
-{
-    GLenum errorCode = glGetError();
-    std::string errorMessage;
-    switch( errorCode ){
-        OPENGL_ERROR_CASE( errorMessage, GL_NO_ERROR );
-        OPENGL_ERROR_CASE( errorMessage, GL_INVALID_ENUM );
-        OPENGL_ERROR_CASE( errorMessage, GL_INVALID_VALUE );
-        OPENGL_ERROR_CASE( errorMessage, GL_INVALID_OPERATION );
-        OPENGL_ERROR_CASE( errorMessage, GL_INVALID_FRAMEBUFFER_OPERATION );
-        OPENGL_ERROR_CASE( errorMessage, GL_OUT_OF_MEMORY );
-        default:
-            errorMessage = "Unknown error";
-        break;
-    }
-        
-    LOG(INFO) << errorMessage.c_str() << " at " << situation << "\n";
-}
-
-
 // --------------------------------------------------------------------------
 // SetTimeFromUnity, an example function we export which is called by one of the scripts.
 
@@ -86,43 +62,6 @@ void EXPORT_API SetMatricesFromUnity( float* modelMatrix,
     viewMatrix_ = glm::make_mat4( viewMatrix );
     projectionMatrix_ = glm::make_mat4( projectionMatrix );
     cameraPos_ = glm::inverse( viewMatrix_ ) * glm::vec4( 0.0f, 0.0f, 0.0f, 1.0f );
-}
-
-
-// --------------------------------------------------------------------------
-// shaders
-
-static GLuint	g_VProg;
-static GLuint	g_FShader;
-static GLuint	g_Program = 0;
-static int		g_WorldMatrixUniformIndex;
-static int		g_ProjMatrixUniformIndex;
-
-static GLuint CreateShader(GLenum type, const char* text )
-{
-    checkOpenGLStatus( "CreateShader - 1" );
-
-    LOG(INFO) << "Shader: " << std::endl << std::endl << text << std::endl << std::endl;
-    GLuint ret = glCreateShader(type);
-
-    checkOpenGLStatus( "CreateShader - 2" );
-    glShaderSource( ret, 1, (const GLchar**)( &text ), nullptr );
-    glCompileShader(ret);
-    checkOpenGLStatus( "CreateShader - 3" );
-    
-    GLint result;
-    glGetShaderiv( ret, GL_COMPILE_STATUS, &result );
-    checkOpenGLStatus( "CreateShader - 4" );
-    
-    LOG(INFO) << "Shader compiler status: " << result << std::endl;
-    if( !result ){
-        GLchar errorLog[1024] = {0};
-        glGetShaderInfoLog(ret, 1024, NULL, errorLog);
-        LOG(INFO) << errorLog << std::endl;
-    }
-    checkOpenGLStatus( "CreateShader - 5" );
-    
-    return ret;
 }
 
 
@@ -190,67 +129,7 @@ void EXPORT_API UnitySetGraphicsDevice (void* device, int deviceType, int eventT
     ::printf("OpenGLES 2.0 device\n");
     checkOpenGLStatus( "UnitySetGraphicsDevice - 1" );
 
-    char vertexShaderCode[] =
-        "attribute vec3 pos;\
-        attribute vec4 color;\
-        attribute vec2 uv;\
-        \
-        varying vec4 ocolor;\
-        varying vec2 ouv;\
-        \
-        uniform mat4 worldMatrix;\
-        uniform mat4 projMatrix;\
-        \
-        void main()\
-        {\
-            gl_Position = (projMatrix * worldMatrix) * vec4(pos,1);\
-            ocolor = color;\
-            ouv = uv;\
-        }";
-
-    char fragmetShaderCode[] =
-        "precision mediump float;\
-        varying vec4 ocolor;\
-        varying vec2 ouv;\
-        \
-        uniform sampler2D textureSampler;\
-        \
-        void main()\
-        {\
-            gl_FragColor = texture2D( textureSampler, ouv );\
-        }";
-    
-    g_VProg		= CreateShader(GL_VERTEX_SHADER, vertexShaderCode);
-    g_FShader	= CreateShader(GL_FRAGMENT_SHADER, fragmetShaderCode);
-
-    checkOpenGLStatus( "UnitySetGraphicsDevice - 2" );
-
-    g_Program = glCreateProgram();
-    LOG(INFO) << "g_Program: " << g_Program << std::endl;
-    
-    glBindAttribLocation(g_Program, 0, "pos");
-    glBindAttribLocation(g_Program, 1, "color");
-    glAttachShader(g_Program, g_VProg);
-    glAttachShader(g_Program, g_FShader);
-    glLinkProgram(g_Program);
-    int result;
-    
-    glGetProgramiv( g_Program, GL_LINK_STATUS, &result );
-	LOG(INFO) << "Shader link status: " << result << std::endl;
-    if( !result ){
-        GLchar errorLog[1024] = {0};
-        glGetProgramInfoLog(g_Program, 1024, NULL, errorLog);
-		LOG(INFO) << errorLog << std::endl;
-    }
-    
-    glGetProgramiv( g_Program, GL_ATTACHED_SHADERS, &result );
-    LOG(INFO) << "Attached shaders status: " << result << std::endl;
-    
-    checkOpenGLStatus( "UnitySetGraphicsDevice - 3" );
-    
-    g_WorldMatrixUniformIndex	= glGetUniformLocation(g_Program, "worldMatrix");
-    g_ProjMatrixUniformIndex	= glGetUniformLocation(g_Program, "projMatrix");
-    checkOpenGLStatus( "UnitySetGraphicsDevice - 4" );
+    InitShaders();
     
     g_DeviceType = deviceType;
 
@@ -335,16 +214,9 @@ static void DoRendering ( const glm::mat4& modelMatrix,
                          const glm::mat4& viewMatrix,
                          const glm::mat4& projectionMatrix )
 {
-    if( g_Program != 0 ){
-        // Set shader program
-        glUseProgram(g_Program);
-        
+    if( UsePluginShader() ){
         // Send modelview matrix to shader.
-        const glm::mat4 modelViewMatrix = viewMatrix * modelMatrix;
-        glUniformMatrix4fv(g_WorldMatrixUniformIndex, 1, GL_FALSE, glm::value_ptr( modelViewMatrix ) );
-        
-        // Send projection matrix to shader.
-        glUniformMatrix4fv(g_ProjMatrixUniformIndex, 1, GL_FALSE, glm::value_ptr( projectionMatrix ) );
+        SendMatricesToShader( modelMatrix, viewMatrix, projectionMatrix );
     
         // Compute the distance between the camera and the plane.
         const float distance = glm::distance( cameraPos_, lodPlane->centroid() );
