@@ -79,9 +79,9 @@ public class UseRenderingPlugin : MonoBehaviour
 		yield return www1;
 		yield return www2;
 
-		SetPlaneTextureFromUnity ( (uint)( www0.texture.GetNativeTextureID() ), 0 );
-		SetPlaneTextureFromUnity ( (uint)( www1.texture.GetNativeTextureID() ), 1 );
-		SetPlaneTextureFromUnity ( (uint)( www2.texture.GetNativeTextureID() ), 2 );
+		SetPlaneTextureFromUnity ( (uint)( www0.texture.GetNativeTexturePtr() ), 0 );
+		SetPlaneTextureFromUnity ( (uint)( www1.texture.GetNativeTexturePtr() ), 1 );
+		SetPlaneTextureFromUnity ( (uint)( www2.texture.GetNativeTexturePtr() ), 2 );
 		
 		CreateTextureAndPassToPlugin();
 
