@@ -64,6 +64,7 @@ void InitShaders()
         void main()\
         {\
             gl_FragColor = texture2D( textureSampler, ouv );\
+            gl_FragColor.rgb *= gl_FragColor.a;\
         }";
 
     g_VProg		= CreateShader(GL_VERTEX_SHADER, vertexShaderCode);
