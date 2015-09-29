@@ -2,7 +2,7 @@ LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 
-LOCAL_MODULE    := RenderingPlugin
+LOCAL_MODULE    := NativeRenderingPlugin
 LOCAL_SRC_FILES := ${ANDROID_SOURCE_FILES}
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../include
 LOCAL_CFLAGS := -DUNITY_ANDROID -std=gnu++11 $(LOCAL_CFLAGS)

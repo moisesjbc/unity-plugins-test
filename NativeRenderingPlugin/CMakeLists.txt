@@ -8,7 +8,7 @@ set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -std=c++11" )
 add_definitions( "-std=c++11" )
 
 # Project info
-project( RenderingPlugin )
+project( NativeRenderingPlugin )
 set( PROJECT_VERSION_MAJOR 0 )
 set( PROJECT_VERSION_MINOR 1 )
 set( PROJECT_VERSION_PATCH 0 )
@@ -40,7 +40,7 @@ set( COMMON_LIBRARIES "${OPENGL_LIBRARIES}" )
 set( PC_LIBRARIES "glew32;${OPENGL_LIBRARIES};" )
 
 # Output directory
-set( UNITY_PLUGINS_DIR "${CMAKE_BINARY_DIR}/../UnityProject/Assets/Plugins" )
+set( UNITY_PLUGINS_DIR "${CMAKE_SOURCE_DIR}/../UnityProject/Assets/Plugins" )
 set( CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${UNITY_PLUGINS_DIR} )
 set( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${UNITY_PLUGINS_DIR} )
 set( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${UNITY_PLUGINS_DIR} )
@@ -58,7 +58,7 @@ set_target_properties( ${PROJECT_NAME} PROPERTIES PREFIX "" )
 set( ANDROID_SOURCE_FILES "" )
 
 foreach( SOURCE_FILE ${SOURCE_FILES} )
-    set( ANDROID_SOURCE_FILES "${ANDROID_SOURCE_FILES} ../${SOURCE_FILE}" )
+    set( ANDROID_SOURCE_FILES "${ANDROID_SOURCE_FILES} ${CMAKE_SOURCE_DIR}/${SOURCE_FILE}" )
 endforeach( SOURCE_FILE SOURCE_FILES )
 
 set( UNITY_ANDROID_PLUGINS_DIR "${UNITY_PLUGINS_DIR}/Android" )
@@ -69,5 +69,5 @@ configure_file( "jni/Application.mk.in" "jni/Application.mk" )
 add_custom_target( ${PROJECT_NAME}_android ALL
     "ndk-build" "-B"
     COMMAND ${CMAKE_COMMAND} -E make_directory ${UNITY_ANDROID_PLUGINS_DIR}
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/libs/armeabi-v7a/libRenderingPlugin.so ${UNITY_ANDROID_PLUGINS_DIR}
+    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/libs/armeabi-v7a/libNativeRenderingPlugin.so ${UNITY_ANDROID_PLUGINS_DIR}
 )

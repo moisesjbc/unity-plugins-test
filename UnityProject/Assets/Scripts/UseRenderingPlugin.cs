@@ -20,7 +20,7 @@ public class UseRenderingPlugin : MonoBehaviour
 #if UNITY_IPHONE && !UNITY_EDITOR
 	[DllImport ("__Internal")]
 #else
-	[DllImport ("RenderingPlugin")]
+	[DllImport ("NativeRenderingPlugin")]
 #endif
 	private static extern void SetTimeFromUnity(float t);
 
@@ -30,7 +30,7 @@ public class UseRenderingPlugin : MonoBehaviour
 #if UNITY_IPHONE && !UNITY_EDITOR
 	[DllImport ("__Internal")]
 #else
-	[DllImport ("RenderingPlugin")]
+	[DllImport ("NativeRenderingPlugin")]
 #endif
 	private static extern void SetTextureFromUnity(System.IntPtr texture, int w, int h);
 
@@ -38,7 +38,7 @@ public class UseRenderingPlugin : MonoBehaviour
 	#if UNITY_IPHONE && !UNITY_EDITOR
 	[DllImport ("__Internal")]
 	#else
-	[DllImport ("RenderingPlugin")]
+	[DllImport ("NativeRenderingPlugin")]
 	#endif
 	private static extern void SetPlaneTextureFromUnity( uint texture, uint lodLevel);
 
@@ -46,7 +46,7 @@ public class UseRenderingPlugin : MonoBehaviour
 	#if UNITY_IPHONE && !UNITY_EDITOR
 	[DllImport ("__Internal")]
 	#else
-	[DllImport ("RenderingPlugin")]
+	[DllImport ("NativeRenderingPlugin")]
 	#endif
 	private static extern void SetMatricesFromUnity( float[] modelMatrix, float[] viewMatrix, float[] projectionMatrix );
 
@@ -54,7 +54,7 @@ public class UseRenderingPlugin : MonoBehaviour
 	#if UNITY_IPHONE && !UNITY_EDITOR
 	[DllImport ("__Internal")]
 	#else
-	[DllImport ("RenderingPlugin")]
+	[DllImport ("NativeRenderingPlugin")]
 	#endif
 	private static extern void InitPlugin ();
 
@@ -62,7 +62,7 @@ public class UseRenderingPlugin : MonoBehaviour
 	#if UNITY_IPHONE && !UNITY_EDITOR
 	[DllImport ("__Internal")]
 	#else
-	[DllImport ("RenderingPlugin")]
+	[DllImport ("NativeRenderingPlugin")]
 	#endif
 	private static extern char[] getOpenGLErrorsLog ();
 
