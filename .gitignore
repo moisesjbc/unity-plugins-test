@@ -31,8 +31,10 @@ rendering-plugin-log.txt
 # Unity3D Generated File On Crash Reports
 sysinfo.txt
 
-# Unity3D plugins
-UnityProject/Assets/Plugins
+# Unity3D native rendering plugin
+libNativeRenderingPlugin.so
+NativeRenderingPlugin.dll
+libNativeRenderingPlugin.dll.a
 
 # Makefiles
 MakeFile
