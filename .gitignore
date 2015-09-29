@@ -21,6 +21,10 @@
 # Android packets
 *.apk
 
+# Android configured file
+Application.mk
+Android.mk
+
 # Android generated makefiles
 RenderingPlugin/jni/Android.mk
 RenderingPlugin/jni/Application.mk
