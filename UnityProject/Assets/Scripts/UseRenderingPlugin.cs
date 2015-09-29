@@ -109,8 +109,6 @@ public class UseRenderingPlugin : MonoBehaviour
 	#endif*/
 	}
 
-	public Matrix4x4 modelMatrix;
-
 	private float[] GetRawArrayFromMatrix( Matrix4x4 matrix )
 	{
 		float[] rawArray = new float[16];
@@ -130,7 +128,7 @@ public class UseRenderingPlugin : MonoBehaviour
 			SetTimeFromUnity (Time.timeSinceLevelLoad);
 
 			// Set matrices for the plugin
-			SetMatricesFromUnity( GetRawArrayFromMatrix( modelMatrix ), 
+			SetMatricesFromUnity( GetRawArrayFromMatrix( Matrix4x4.identity ), 
 			                     GetRawArrayFromMatrix( Camera.current.worldToCameraMatrix ),
 			                     GetRawArrayFromMatrix( Camera.current.projectionMatrix ) );
 
