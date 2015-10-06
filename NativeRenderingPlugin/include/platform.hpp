@@ -30,26 +30,6 @@
 #define EXPORT_API
 #endif
 
-
-// Which graphics device APIs we possibly support?
-#if UNITY_WIN
-#define SUPPORT_OPENGL 1
-#endif
-
-#if UNITY_OSX || UNITY_LINUX
-#define SUPPORT_OPENGL 1
-#endif
-
-#if UNITY_IPHONE || UNITY_ANDROID
-    #define SUPPORT_OPENGLES 1
-#endif
-
-// Include headers for the graphics APIs we support
-
-#if !SUPPORT_OPENGL
-#error "OpenGL required!"
-#endif
-
 #include <easylogging++.h>
 
 #define GL_GLEXT_PROTOTYPES
