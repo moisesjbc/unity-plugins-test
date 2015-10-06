@@ -10,7 +10,7 @@ static GLuint CreateShader(GLenum type, const char* text )
 {
     checkOpenGLStatus( "CreateShader - 1" );
 
-    { std::ofstream file; file.open( "/sdcard/logs/rendering-plugin-android.log", std::fstream::out | std::fstream::app ); file << "Shader: " << std::endl << std::endl << text << std::endl << std::endl; file.close(); }
+    LOG(INFO) << "Shader: " << std::endl << std::endl << text << std::endl;
     GLuint ret = glCreateShader(type);
 
     checkOpenGLStatus( "CreateShader - 2" );
@@ -22,11 +22,11 @@ static GLuint CreateShader(GLenum type, const char* text )
     glGetShaderiv( ret, GL_COMPILE_STATUS, &result );
     checkOpenGLStatus( "CreateShader - 4" );
 
-    { std::ofstream file; file.open( "/sdcard/logs/rendering-plugin-android.log", std::fstream::out | std::fstream::app ); file << "Shader compiler status: " << result << std::endl; file.close(); }
+    LOG(INFO) << "Shader compiler status: " << result << std::endl;
     if( !result ){
         GLchar errorLog[1024] = {0};
         glGetShaderInfoLog(ret, 1024, NULL, errorLog);
-        { std::ofstream file; file.open( "/sdcard/logs/rendering-plugin-android.log", std::fstream::out | std::fstream::app ); file << errorLog << std::endl; file.close(); }
+        LOG(INFO) << errorLog << std::endl;
     }
     checkOpenGLStatus( "CreateShader - 5" );
 
@@ -73,7 +73,7 @@ void InitShaders()
     checkOpenGLStatus( "UnitySetGraphicsDevice - 2" );
 
     g_Program = glCreateProgram();
-    { std::ofstream file; file.open( "/sdcard/logs/rendering-plugin-android.log", std::fstream::out | std::fstream::app ); file << "g_Program: " << g_Program << std::endl; file.close(); }
+    LOG(INFO) << "g_Program: " << g_Program << std::endl;
 
     glBindAttribLocation(g_Program, 0, "pos");
     glBindAttribLocation(g_Program, 1, "color");
@@ -83,15 +83,15 @@ void InitShaders()
     int result;
 
     glGetProgramiv( g_Program, GL_LINK_STATUS, &result );
-    { std::ofstream file; file.open( "/sdcard/logs/rendering-plugin-android.log", std::fstream::out | std::fstream::app ); file << "Shader link status: " << result << std::endl; file.close(); }
+    LOG(INFO) << "Shader link status: " << result << std::endl;
     if( !result ){
         GLchar errorLog[1024] = {0};
         glGetProgramInfoLog(g_Program, 1024, NULL, errorLog);
-        { std::ofstream file; file.open( "/sdcard/logs/rendering-plugin-android.log", std::fstream::out | std::fstream::app ); file << errorLog << std::endl; file.close(); }
+        LOG(INFO) << errorLog << std::endl;
     }
 
     glGetProgramiv( g_Program, GL_ATTACHED_SHADERS, &result );
-    { std::ofstream file; file.open( "/sdcard/logs/rendering-plugin-android.log", std::fstream::out | std::fstream::app ); file << "Attached shaders status: " << result << std::endl; file.close(); }
+    LOG(INFO) << "Attached shaders status: " << result << std::endl;
 
     checkOpenGLStatus( "UnitySetGraphicsDevice - 3" );
 
