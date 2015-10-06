@@ -3,6 +3,13 @@ set( CMAKE_BUILD_TYPE Release )
 
 set( ANDROID 1 )
 
+# Set Unity include path.
+set( UNITY_INCLUDE_DIR "" CACHE FILEPATH "Path to Unity dir containing the plugin API. Tipically: UNITY_DIR/Editor/Data/PluginAPI")
+set( UNITY_INCLUDE_FILE "${UNITY_INCLUDE_DIR}/IUnityGraphics.h" )
+if(NOT EXISTS ${UNITY_INCLUDE_FILE})
+    message( FATAL_ERROR "File [${UNITY_INCLUDE_FILE}] NOT FOUND. Please, set UNITY_INCLUDE_DIR properly to point to UNITY_DIR/Editor/Data/PluginAPI" )
+endif(NOT EXISTS ${UNITY_INCLUDE_FILE})
+
 # Compiler flags
 set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -std=c++11" )
 add_definitions( "-std=c++11" )
@@ -35,7 +42,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 find_package(OpenGL REQUIRED)
 find_package(GLM REQUIRED)
 # TODO: add find_package for SDL2 and use result variables.
-include_directories( ${OPENGL_INCLUDE_DIRS} ${GLM_INCLUDE_DIR} "${CMAKE_SOURCE_DIR}/include" )
+include_directories( ${OPENGL_INCLUDE_DIRS} ${GLM_INCLUDE_DIR} "${UNITY_INCLUDE_DIR}" "${CMAKE_SOURCE_DIR}/include" )
 set( COMMON_LIBRARIES "${OPENGL_LIBRARIES}" )
 set( PC_LIBRARIES "glew32;${OPENGL_LIBRARIES};" )
 

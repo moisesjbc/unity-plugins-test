@@ -1,6 +1,8 @@
 #ifndef PLATFORM_HPP
 #define PLATFORM_HPP
 
+#include <IUnityGraphics.h>
+
 // Which platform we are on?
 #if _MSC_VER || __MINGW32__
 #define UNITY_WIN 1
