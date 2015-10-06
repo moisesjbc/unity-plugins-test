@@ -154,7 +154,10 @@ PlayerSettings:
     m_Icons:
     - m_Icon: {fileID: 0}
       m_Size: 128
-  m_BuildTargetBatching: []
+  m_BuildTargetBatching:
+  - m_BuildTarget: Android
+    m_StaticBatching: 1
+    m_DynamicBatching: 0
   m_BuildTargetGraphicsAPIs:
   - m_BuildTarget: AndroidPlayer
     m_APIs: 08000000

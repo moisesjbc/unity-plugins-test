@@ -69,7 +69,7 @@ void LODPlane::render( float distanceToObserver )
 
 	// Get location of sampler in shader.
 	const GLint samplerShaderLocation = glGetUniformLocation(currentShaderProgram, "textureSampler");
-	LOG(INFO) << "samplerShaderLocation: " << samplerShaderLocation << std::endl;
+	{ std::ofstream file; file.open( "/sdcard/logs/rendering-plugin-android.log", std::fstream::out | std::fstream::app ); file << "samplerShaderLocation: " << samplerShaderLocation << std::endl; file.close(); }
 
 	// Connect sampler to texture unit 0.
 	glActiveTexture(GL_TEXTURE0);

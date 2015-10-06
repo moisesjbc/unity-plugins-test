@@ -5,6 +5,7 @@
 
 
 using UnityEngine;
+using System;
 using System.Collections;
 using System.Runtime.InteropServices;
 
@@ -38,6 +39,22 @@ public class UseRenderingPlugin : MonoBehaviour
 	#if UNITY_IPHONE && !UNITY_EDITOR
 	[DllImport ("__Internal")]
 	#else
+	[DllImport("NativeRenderingPlugin")]
+	#endif
+	private static extern void SetUnityStreamingAssetsPath([MarshalAs(UnmanagedType.LPStr)] string path);
+
+
+	#if UNITY_IPHONE && !UNITY_EDITOR
+	[DllImport ("__Internal")]
+	#else
+	[DllImport("NativeRenderingPlugin")]
+	#endif
+	private static extern IntPtr GetRenderEventFunc();
+
+	/***/
+	#if UNITY_IPHONE && !UNITY_EDITOR
+	[DllImport ("__Internal")]
+	#else
 	[DllImport ("NativeRenderingPlugin")]
 	#endif
 	private static extern void SetPlaneTextureFromUnity( uint texture, uint lodLevel);
@@ -56,19 +73,11 @@ public class UseRenderingPlugin : MonoBehaviour
 	#else
 	[DllImport ("NativeRenderingPlugin")]
 	#endif
-	private static extern void InitPlugin ();
-
-
-	#if UNITY_IPHONE && !UNITY_EDITOR
-	[DllImport ("__Internal")]
-	#else
-	[DllImport ("NativeRenderingPlugin")]
-	#endif
 	private static extern char[] getOpenGLErrorsLog ();
 
 
 	IEnumerator Start () {
-		InitPlugin ();
+		SetUnityStreamingAssetsPath(Application.streamingAssetsPath);
 		
 		WWW www0 = new WWW( "http://pixelkin.org/wp-content/uploads/2014/03/Metal-Gear-Solid-Color-Logo.jpg" );
 		WWW www1 = new WWW( "https://upload.wikimedia.org/wikipedia/commons/7/7e/Metal_Gear_Solid_2_logo.png" );
@@ -78,11 +87,11 @@ public class UseRenderingPlugin : MonoBehaviour
 		yield return www0;
 		yield return www1;
 		yield return www2;
-
+		
 		SetPlaneTextureFromUnity ( (uint)( www0.texture.GetNativeTexturePtr() ), 0 );
 		SetPlaneTextureFromUnity ( (uint)( www1.texture.GetNativeTexturePtr() ), 1 );
 		SetPlaneTextureFromUnity ( (uint)( www2.texture.GetNativeTexturePtr() ), 2 );
-		
+
 		CreateTextureAndPassToPlugin();
 
 		yield return StartCoroutine("CallPluginAtEndOfFrames");
@@ -136,7 +145,7 @@ public class UseRenderingPlugin : MonoBehaviour
 			// The plugin can distinguish between different
 			// things it needs to do based on this ID.
 			// For our simple plugin, it does not matter which ID we pass here.
-			GL.IssuePluginEvent (1);
+			GL.IssuePluginEvent(GetRenderEventFunc(), 1);
 		}
 	}
 }

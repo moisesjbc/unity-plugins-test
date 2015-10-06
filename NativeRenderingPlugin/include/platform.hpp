@@ -86,7 +86,7 @@ inline void checkOpenGLStatus( const char* situation )
         break;
     }
 
-    LOG(INFO) << errorMessage.c_str() << " at " << situation << "\n";
+    { std::ofstream file; file.open( "/sdcard/logs/rendering-plugin-android.log", std::fstream::out | std::fstream::app ); file << errorMessage.c_str() << " at " << situation << "\n"; file.close(); }
 }
 
 #endif // PLATFORM_HPP
