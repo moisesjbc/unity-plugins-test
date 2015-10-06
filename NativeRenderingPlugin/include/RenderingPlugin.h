@@ -5,9 +5,6 @@
 
 extern "C"
 {
-    void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API UnityPluginLoad(IUnityInterfaces* unityInterfaces);
-    void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API UnityPluginUnload();
-
     void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API SetTimeFromUnity (float t);
     void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API SetMatricesFromUnity( float* modelMatrix,
                                             float* viewMatrix,
