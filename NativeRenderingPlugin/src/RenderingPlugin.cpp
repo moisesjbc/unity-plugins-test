@@ -201,6 +201,7 @@ static void DoEventGraphicsDeviceGLES(UnityGfxDeviceEventType eventType)
 {
     if (eventType == kUnityGfxDeviceEventInitialize)
     {
+        LOG(INFO) << "DoEventGraphicsDeviceGLES - kUnityGfxDeviceEventInitialize" << std::endl;
         if ((s_DeviceType != kUnityGfxRendererOpenGL) && (s_DeviceType != kUnityGfxRendererOpenGLES20)){
             LOG(ERROR) << "NO OPENGL (" << s_DeviceType << ")" << std::endl;
         }
@@ -225,8 +226,13 @@ static void DoEventGraphicsDeviceGLES(UnityGfxDeviceEventType eventType)
 
         el::Loggers::flushAll();
     }else if (eventType == kUnityGfxDeviceEventShutdown){
-
+        LOG(INFO) << "DoEventGraphicsDeviceGLES - kUnityGfxDeviceEventShutdown" << std::endl;
+    }else if (eventType == kUnityGfxDeviceEventBeforeReset){
+        LOG(INFO) << "DoEventGraphicsDeviceGLES - kUnityGfxDeviceEventBeforeReset" << std::endl;
+    }else if( eventType == kUnityGfxDeviceEventAfterReset){
+        LOG(INFO) << "DoEventGraphicsDeviceGLES - kUnityGfxDeviceEventAfterReset" << std::endl;
     }
+
 }
 
 
