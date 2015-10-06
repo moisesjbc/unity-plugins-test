@@ -77,8 +77,6 @@ public class UseRenderingPlugin : MonoBehaviour
 
 
 	IEnumerator Start () {
-		SetUnityStreamingAssetsPath(Application.streamingAssetsPath);
-		
 		WWW www0 = new WWW( "http://pixelkin.org/wp-content/uploads/2014/03/Metal-Gear-Solid-Color-Logo.jpg" );
 		WWW www1 = new WWW( "https://upload.wikimedia.org/wikipedia/commons/7/7e/Metal_Gear_Solid_2_logo.png" );
 		WWW www2 = new WWW( "https://upload.wikimedia.org/wikipedia/commons/c/c0/Metal_Gear_Solid_3_logo.png" );

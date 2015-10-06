@@ -81,16 +81,6 @@ void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API SetTextureFromUnity(void* textur
 
 
 // --------------------------------------------------------------------------
-// SetUnityStreamingAssetsPath, an example function we export which is called by one of the scripts.
-
-static std::string s_UnityStreamingAssetsPath;
-extern "C" void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API SetUnityStreamingAssetsPath(const char* path)
-{
-    s_UnityStreamingAssetsPath = path;
-}
-
-
-// --------------------------------------------------------------------------
 // UnitySetInterfaces
 
 static void UNITY_INTERFACE_API OnGraphicsDeviceEvent(UnityGfxDeviceEventType eventType);
