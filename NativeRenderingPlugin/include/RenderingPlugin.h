@@ -14,6 +14,7 @@ extern "C"
                                             float* projectionMatrix );
     void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API SetTextureFromUnity(void* texturePtr, int w, int h);
     void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API SetPlaneTextureFromUnity( GLuint texturePtr, unsigned int lodLevel );
+    UnityRenderingEvent UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API GetRenderEventFunc();
 }
 
 #endif // RENDERING_PLUGIN_H
