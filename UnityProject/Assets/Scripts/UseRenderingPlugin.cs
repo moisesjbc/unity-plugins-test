@@ -84,8 +84,6 @@ public class UseRenderingPlugin : MonoBehaviour
 		SetPlaneTextureFromUnity ( (uint)( www2.texture.GetNativeTexturePtr() ), 2 );
 		
 		CreateTextureAndPassToPlugin();
-
-		yield return StartCoroutine("CallPluginAtEndOfFrames");
 	}
 
 
@@ -118,25 +116,20 @@ public class UseRenderingPlugin : MonoBehaviour
 		return rawArray;
 	}
 
-	private IEnumerator CallPluginAtEndOfFrames()
-	{
-		while (true) {
-			// Wait until all frame rendering is done
-			yield return new WaitForEndOfFrame();
 
-			// Set time for the plugin
-			SetTimeFromUnity (Time.timeSinceLevelLoad);
-
-			// Set matrices for the plugin
-			SetMatricesFromUnity( GetRawArrayFromMatrix( Matrix4x4.identity ), 
-			                     GetRawArrayFromMatrix( Camera.current.worldToCameraMatrix ),
-			                     GetRawArrayFromMatrix( Camera.current.projectionMatrix ) );
-
-			// Issue a plugin event with arbitrary integer identifier.
-			// The plugin can distinguish between different
-			// things it needs to do based on this ID.
-			// For our simple plugin, it does not matter which ID we pass here.
-			GL.IssuePluginEvent (1);
-		}
+	void OnRenderObject() {
+		// Set time for the plugin
+		SetTimeFromUnity (Time.timeSinceLevelLoad);
+		
+		// Set matrices for the plugin
+		SetMatricesFromUnity( GetRawArrayFromMatrix( Matrix4x4.identity ), 
+		                     GetRawArrayFromMatrix( Camera.current.worldToCameraMatrix ),
+		                     GetRawArrayFromMatrix( Camera.current.projectionMatrix ) );
+		
+		// Issue a plugin event with arbitrary integer identifier.
+		// The plugin can distinguish between different
+		// things it needs to do based on this ID.
+		// For our simple plugin, it does not matter which ID we pass here.
+		GL.IssuePluginEvent (1);
 	}
 }
