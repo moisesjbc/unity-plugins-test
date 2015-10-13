@@ -197,12 +197,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   directRender: 1
+  keepStereoUpdated: 0
   stereoMultiplier: 1
   matchMonoFOV: 0
   matchByZoom: 0
   centerOfInterest: {fileID: 0}
   radiusOfInterest: 0
   checkStereoComfort: 1
+  stereoAdjustSmoothing: .100000001
   screenParallax: 0
   stereoPaddingX: 0
   stereoPaddingY: 0
