@@ -8,10 +8,10 @@ LODPlane::LODPlane( GLuint textureID ) :
     // A plane.
     MyVertex srcVertices[] =
     {
-        MyVertex( -1.5f, 1.0f, -1.0f, 0xFFff0000, 0.0f, 0.0f ),
-        MyVertex( -0.5f, 1.0f, -1.0f, 0xFF00ff00, 1.0f, 0.0f ),
-        MyVertex( -0.5f, 1.0f, 0.0f, 0xFF0000ff, 1.0f, 1.0f ),
-        MyVertex( -1.5f, 1.f, 0.0f, 0xFF0f0f0f, 0.0f, 1.0f )
+        MyVertex( -1.5f, 1.0f, -1.5f, 0xFFff0000, 0.0f, 0.0f ),
+        MyVertex( 1.5f, 1.0f, -1.5f, 0xFF00ff00, 1.0f, 0.0f ),
+        MyVertex( 1.5f, 1.0f, 1.5f, 0xFF0000ff, 1.0f, 1.0f ),
+        MyVertex( -1.5f, 1.f, 1.5f, 0xFF0f0f0f, 0.0f, 1.0f )
     };
     
     // Copy original plane to vertices vector
