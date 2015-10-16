@@ -36,8 +36,11 @@ sysinfo.txt
 
 # Unity3D native rendering plugin
 libNativeRenderingPlugin.so
+libNativeRenderingPlugin.so.meta
 NativeRenderingPlugin.dll
+NativeRenderingPlugin.dll.meta
 libNativeRenderingPlugin.dll.a
+libNativeRenderingPlugin.dll.a.meta
 
 # Makefiles
 MakeFile
