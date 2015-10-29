@@ -53,24 +53,6 @@ This is a test about creating a rendering plugin for [Unity](http://unity3d.com)
 
 ## Working on the project
 
-### Directory hierarchy
-
-The **main files** of the project’s directory hierarchy are presented below:
-
-*LOCAL_REPO_DIR*
-
-* **RenderingPlugin/:** Code for Plugin’s rendering plugin.
-  * **CMakeLists.txt:** Specification file for building the plugin using CMake
-  * **include/:** Headers
-    * **RenderingPlugin.h:** Declarations of exported functions to be called by Unity.
-    * **\*.hpp:** Declarations of inner classes used by the plugin.
-  * **src/:** Source files
-    * **RenderingPlugin.c:** Definitions of exported functions to be called by Unity.
-    * **\*.cpp:** Definitions of inner classes used by the plugin.
-* **UnityProject/:** Unity project using the rendering plugin.
-  * **Assets/:** Project assets
-    * **Scripts/:** Project scripts. Some of these scripts are the ones which communicates with the rendering plugin.
-
 ### IMPORTANT NOTE FOR DEVELOPERS
 
 When recompiling the plugin, this must be moved to the *LOCAL_REPO_DIR*/UnityProject/Assets/Plugins directory in order for Unity to use it. **But there is a problem**, according to [this link](http://answers.unity3d.com/questions/55234/recompiled-plugins-not-refreshing-in-unity.html), **"On Windows, the DLL file would be locked for writing, stopping you from overwiting it"**. This means that, in order to update the plugin, the Unity project must be closed while we overwrite the old version of the plugin with the new one. Once we reopen Unity project, it should load the new version of the plugin.
