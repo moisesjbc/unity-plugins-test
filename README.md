@@ -1,5 +1,7 @@
 ﻿# unity-plugins-test
 
+![Screenshot of the project sample 3D scene viewed through Google Cardboard](screenshot_unity_plugins_test.jpg)
+
 This is a test about creating a rendering plugin for [Unity](http://unity3d.com). When used together, we get a scene with some models rendered by Unity and some others rendered by the plugin itself.
 
 **This project has been tested on Windows and Android only**.
