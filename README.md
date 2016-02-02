@@ -2,7 +2,7 @@
 
 This is a test about creating a rendering plugin for [Unity](http://unity3d.com). When used together, we get a scene with some models rendered by Unity and some others rendered by the plugin itself.
 
-**NOTE**: At this point of the development, this project is being built **under Windows only**.
+**This project has been tested on Windows and Android only**.
 
 ## Dependencies
 
@@ -49,7 +49,9 @@ This is a test about creating a rendering plugin for [Unity](http://unity3d.com)
 
 8. From Unity, open the project *LOCAL_REPO_DIR*/UnityProject
 
-9. Press play and enjoy this masterpiece!
+9. Open the scene in *Assets/scene.unity*
+
+10. Press play and enjoy this masterpiece!
 
 ## Working on the project
 
